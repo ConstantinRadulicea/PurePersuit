@@ -1,4 +1,9 @@
-#pragma once
+#ifndef __PUREPURSUITGEOMETRY_H__
+#define __PUREPURSUITGEOMETRY_H__
+
+
+
+
 #include <math.h>
 #include <string.h>
 #include <corecrt_math_defines.h>
@@ -176,5 +181,5 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 }
 
 
-
+#endif // !__PUREPURSUITGEOMETRY_H__
 

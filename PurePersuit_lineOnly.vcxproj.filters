@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="geometry.h">
+    <ClInclude Include="PurePursuitGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
