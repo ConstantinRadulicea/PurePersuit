@@ -51,6 +51,7 @@ static LineABC xAxisABC() {
 	line.Ax = 0.0f;
 	line.By = 1.0f;
 	line.C = 0.0f;
+	return line;
 }
 
 static LineABC yAxisABC() {
@@ -58,6 +59,7 @@ static LineABC yAxisABC() {
 	line.Ax = 1.0f;
 	line.By = 0.0f;
 	line.C = 0.0f;
+	return line;
 }
 
 static LineABC normalizeLineABC2MQ(LineABC line) {
@@ -112,7 +114,7 @@ static LineABC middleLineABC(LineABC line1, LineABC line2) {
 
 static LineMQ points2line(Point2D point1, Point2D point2) {
 	LineMQ line;
-	line.m = (point1.y - point2.y) / (point1.x - point1.x);
+	line.m = (point1.y - point2.y) / (point1.x - point2.x);
 	line.q = (line.m * (-point1.x)) + point1.y;
 	return line;
 }

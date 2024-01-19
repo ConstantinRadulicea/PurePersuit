@@ -4,6 +4,8 @@
 
 
 int main() {
+	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
+
 	LineMQ wayPoints = { -3.5f, 625 };
 	// LineABC wayPointsAbc = { 3.5f, 1, -625 };
 	LineABC wayPointsAbc = { 2, 0, 0 };
@@ -18,6 +20,6 @@ int main() {
 	info = purePursuitCompute(carPos, wayPoints, carLength, lookAheadDistance);
 	info2 = purePursuitComputeABC(carPos, wayPointsAbc, carLength, lookAheadDistance);
 
-	carLength = angleBetweenLinesABC(wayPointsAbc, lineMQ2ABC(wayPoints));
+	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ 48, 36 }, Point2D{12, 10}), xAxisABC());
 	return 0;
 }
