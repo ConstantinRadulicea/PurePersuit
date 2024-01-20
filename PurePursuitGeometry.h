@@ -62,6 +62,12 @@ static LineABC yAxisABC() {
 	return line;
 }
 
+static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
+	float distance;
+	distance = fabsf((- line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax)*(-line1.Ax)));
+	return distance;
+}
+
 static Point2D mirrorImage( LineABC line, Point2D point)
 {
 	Point2D mirrorPoint_;
@@ -82,6 +88,65 @@ static LineABC normalizeLineABC2MQ(LineABC line) {
 	}
 	return line;
 }
+
+/*
+ * side:
+ *		1: new line on right or bottom side
+ *	   0: new line on left or upper side
+*/
+static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
+	LineABC parallelLine;
+	float abs_q1_minus_q2, newQ;
+
+	if (line.By != 0.0f)
+	{
+		line = normalizeLineABC2MQ(line);
+	}
+
+	parallelLine = line;
+	abs_q1_minus_q2 = distance * sqrtf(1.0f + ((-line.Ax) * (-line.Ax)));
+	if (side > 0)
+	{
+		if (line.By == 0.0f)	//		-.
+		{
+			newQ = (-line.C) + distance;
+		}
+		else if ((-line.Ax) == 0.0f) //		|.
+		{
+			newQ = (-line.C) - distance;
+		}
+		else if ((-line.Ax) > 0.0f) //			/ .		
+		{
+			newQ = (-line.C) - abs_q1_minus_q2;
+		}
+		else if ((-line.Ax) < 0.0f) //		\ .		
+		{
+			newQ = (-line.C) + abs_q1_minus_q2;
+		}
+	}
+	else
+	{
+		if (line.By == 0.0f)	//		-.
+		{
+			newQ = (-line.C) - distance;
+		}
+		else if ((-line.Ax) == 0.0f) //		|.
+		{
+			newQ = (-line.C) + distance;
+		}
+		else if ((-line.Ax) > 0.0f) //			/ .		
+		{
+			newQ = (-line.C) + abs_q1_minus_q2;
+		}
+		else if ((-line.Ax) < 0.0f) //		\ .		
+		{
+			newQ = (-line.C) - abs_q1_minus_q2;
+		}
+	}
+	parallelLine.C = -newQ;
+	return parallelLine;
+}
+
 
 static int isLineParallelToXaxis(LineABC line) {
 	if (line.Ax == 0 && line.By != 0)
