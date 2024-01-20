@@ -62,6 +62,18 @@ static LineABC yAxisABC() {
 	return line;
 }
 
+static Point2D mirrorImage( LineABC line, Point2D point)
+{
+	Point2D mirrorPoint_;
+	float temp;
+
+	temp = -2.0f * (line.Ax * point.x + line.By * point.y + line.C) / (line.Ax * line.Ax + line.By * line.By);
+	mirrorPoint_.x = temp * line.Ax + point.x;
+	mirrorPoint_.y = temp * line.By + point.y;
+
+	return mirrorPoint_;
+}
+
 static LineABC normalizeLineABC2MQ(LineABC line) {
 	if (line.By != 1.0f && line.By != 0.0f) {
 		line.C = line.C / line.By;
