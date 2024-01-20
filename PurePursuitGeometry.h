@@ -147,7 +147,6 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 	return parallelLine;
 }
 
-
 static int isLineParallelToXaxis(LineABC line) {
 	if (line.Ax == 0 && line.By != 0)
 	{
@@ -174,19 +173,84 @@ static float angleBetweenLines(LineMQ line1, LineMQ line2) {
 	return angle;
 }
 
-static LineMQ middleLine(LineMQ line1, LineMQ line2) {
-	LineMQ middleLine_;
-	middleLine_.m = (line1.m + line2.m) / 2.0f;
-	middleLine_.q = (line1.q + line2.q) / 2.0f;
-	return middleLine_;
-}
+// https://www.math-only-math.com/equations-of-the-bisectors-of-the-angles-between-two-straight-lines.html
+//acutangle is the bisector when the lines are parallel
+static void bisectorsOfTwoLines(LineABC line1, LineABC line2, LineABC *acuteAngle, LineABC *ottuseAngle) {
+	float a1, a2, b1, b2, c1, c2;
+	float aa1, aa2, bb1, bb2, cc1, cc2;
+	float leftDenominator, rightDenominator;
+	float gg;
 
-static LineABC middleLineABC(LineABC line1, LineABC line2) {
-	LineABC middleLine_;
-	middleLine_.Ax = (line1.Ax + line2.Ax) / 2.0f;
-	middleLine_.By = (line1.By + line2.By) / 2.0f;
-	middleLine_.C = (line1.C + line2.C) / 2.0f;
-	return middleLine_;
+	a1 = line1.Ax;
+	b1 = line1.By;
+	c1 = line1.C;
+	a2 = line2.Ax;
+	b2 = line2.By;
+	c2 = line2.C;
+
+	if (c1 < 0.0f)
+	{
+		a1 = -a1;
+		b1 = -b1;
+		c1 = -c1;
+	}
+	if (c2 < 0.0f)
+	{
+		a2 = -a2;
+		b2 = -b2;
+		c2 = -c2;
+	}
+
+	leftDenominator = sqrtf((a1 * a1) + (b1 * b1));
+	rightDenominator = sqrtf((a2 * a2) + (b2 * b2));
+
+	// +
+	aa1 = (rightDenominator * a1) - (leftDenominator * a2);
+	bb1 = (rightDenominator * b1) - (leftDenominator * b2);
+	cc1 = (rightDenominator * c1) - (leftDenominator * c2);
+
+	// -
+	aa2 = (rightDenominator * a1) + (leftDenominator * a2);
+	bb2 = (rightDenominator * b1) + (leftDenominator * b2);
+	cc2 = (rightDenominator * c1) + (leftDenominator * c2);
+
+	gg = (a1 * a2) + (b1 * b2);
+
+	if (gg >= 0.0f)
+	{
+		if (ottuseAngle)
+		{
+			ottuseAngle->Ax = aa1;
+			ottuseAngle->By = bb1;
+			ottuseAngle->C = cc1;
+		}
+		if (acuteAngle)
+		{
+			acuteAngle->Ax = aa2;
+			acuteAngle->By = bb2;
+			acuteAngle->C = cc2;
+		}
+	}
+	else if (gg < 0.0f) {
+		if (acuteAngle)
+		{
+			acuteAngle->Ax = aa1;
+			acuteAngle->By = bb1;
+			acuteAngle->C = cc1;
+		}
+		if (ottuseAngle)
+		{
+			ottuseAngle->Ax = aa2;
+			ottuseAngle->By = bb2;
+			ottuseAngle->C = cc2;
+		}
+	}
+	if (ottuseAngle) {
+		*ottuseAngle = normalizeLineABC2MQ(*ottuseAngle);
+	}
+	if (acuteAngle) {
+		*acuteAngle = normalizeLineABC2MQ(*acuteAngle);
+	}
 }
 
 static LineMQ points2line(Point2D point1, Point2D point2) {
@@ -316,6 +380,8 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 	float a, b, c, x_, delta;
 
 	memset(&points, 0, sizeof(points));
+
+	lineAbc = normalizeLineABC2MQ(lineAbc);
 
 	if (!isLineParallelToYaxis(lineAbc))
 	{
