@@ -21,7 +21,7 @@ int main() {
 	info = purePursuitCompute(carPos, wayPoints, carLength, lookAheadDistance);
 	info2 = purePursuitComputeABC(carPos, wayPointsAbc, carLength, lookAheadDistance);
 
-	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ 48, 36 }, Point2D{12, 10}), xAxisABC());
+	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());
 	
 	wayPointsAbc = parallelLineAtDistance(LineABC{ 3.0f, 1.0f, -5.0f }, 0.9486f, 0);
 

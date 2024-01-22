@@ -85,6 +85,13 @@ static LineABC normalizeLineABC2MQ(LineABC line) {
 		line.C = line.C / line.By;
 		line.Ax = line.Ax / line.By;
 		line.By = 1.0f;
+		return line;
+	}
+	if (line.By == 0.0f)
+	{
+		line.C = line.C / line.Ax;
+		line.Ax = 1.0f;
+		return line;
 	}
 	return line;
 }
@@ -98,20 +105,17 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 	LineABC parallelLine;
 	float abs_q1_minus_q2, newQ;
 
-	if (line.By != 0.0f)
-	{
-		line = normalizeLineABC2MQ(line);
-	}
+	line = normalizeLineABC2MQ(line);
 
 	parallelLine = line;
 	abs_q1_minus_q2 = distance * sqrtf(1.0f + ((-line.Ax) * (-line.Ax)));
 	if (side > 0)
 	{
-		if (line.By == 0.0f)	//		-.
+		if (line.By == 0.0f)	//		|.
 		{
 			newQ = (-line.C) + distance;
 		}
-		else if ((-line.Ax) == 0.0f) //		|.
+		else if ((-line.Ax) == 0.0f) //		-.
 		{
 			newQ = (-line.C) - distance;
 		}
@@ -126,11 +130,11 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 	}
 	else
 	{
-		if (line.By == 0.0f)	//		-.
+		if (line.By == 0.0f)	//		|.
 		{
 			newQ = (-line.C) - distance;
 		}
-		else if ((-line.Ax) == 0.0f) //		|.
+		else if ((-line.Ax) == 0.0f) //		-.
 		{
 			newQ = (-line.C) + distance;
 		}
@@ -148,7 +152,7 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 }
 
 static int isLineParallelToXaxis(LineABC line) {
-	if (line.Ax == 0 && line.By != 0)
+	if (line.Ax == 0.0f && line.By != 0.0f)
 	{
 		return 1;
 	}
@@ -158,7 +162,7 @@ static int isLineParallelToXaxis(LineABC line) {
 }
 
 static int isLineParallelToYaxis(LineABC line) {
-	if (line.By == 0 && line.Ax != 0)
+	if (line.By == 0.0f && line.Ax != 0.0f)
 	{
 		return 1;
 	}
@@ -280,18 +284,30 @@ static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
 	float angle;
 	LineMQ line1Mq, line2Mq;
 
-	if (isLineParallelToYaxis(line1) && isLineParallelToYaxis(line2)) {
+	if (isLineParallelToXaxis(line1) && isLineParallelToXaxis(line2)) {
 		return 0.0f;	/* line1 // line2 // Y */
 	}
 
 	if (isLineParallelToYaxis(line1))
 	{
+		if (isLineParallelToXaxis(line2)) {
+			return M_PI_2;
+		}
+		else if (isLineParallelToYaxis(line2)) {
+			return 0.0f;	/* line1 // line2 // Y */
+		}
 		line1Mq = lineABC2MQ(line2);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
 		angle = M_PI_2 - angleBetweenLines(line1Mq, line2Mq);
 	}
 	else if (isLineParallelToYaxis(line2)) {
+		if (isLineParallelToXaxis(line1)) {
+			return M_PI_2;
+		}
+		else if (isLineParallelToYaxis(line1)) {
+			return 0.0f;	/* line1 // line2 // Y */
+		}
 		line1Mq = lineABC2MQ(line1);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
@@ -327,19 +343,23 @@ static float euclidianDistance(Point2D point1, Point2D point2) {
 
 static float distance2line(Point2D point, LineMQ line) {
 	float distance;
-	distance = fabsf((line.m * point.x) + (-1.0f * point.y) + line.q) / sqrtf((line.m * line.m) + 1);
+	distance = fabsf((line.m * point.x) + (-1.0f * point.y) + line.q) / sqrtf((line.m * line.m) + 1.0f);
 	return distance;
 }
 
 static float distance2lineABC(Point2D point, LineABC lineAbc) {
 	float distance;
 	LineMQ line;
-	if (lineAbc.By == 0)
+	Point2D point2Temp;
+	if (lineAbc.By == 0.0f)
 	{
-		return fabsf(point.x - (-lineAbc.C));
+		lineAbc = normalizeLineABC2MQ(lineAbc);
+		point2Temp.y = point.y;
+		point2Temp.x = (-lineAbc.C) / lineAbc.Ax;
+		return euclidianDistance(point, point2Temp);
 	}
 	line = lineABC2MQ(lineAbc);
-	distance = fabsf((line.m * point.x) + (-1.0f * point.y) + line.q) / sqrtf((line.m * line.m) + 1);
+	distance = distance2line(point, line);
 	return distance;
 }
 
@@ -379,6 +399,8 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 	LineMQ line;
 	float a, b, c, x_, delta;
 
+	x_ = 0.0f;
+	memset(&line, 0, sizeof(line));
 	memset(&points, 0, sizeof(points));
 
 	lineAbc = normalizeLineABC2MQ(lineAbc);
