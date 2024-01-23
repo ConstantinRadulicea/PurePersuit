@@ -62,6 +62,23 @@ static LineABC yAxisABC() {
 	return line;
 }
 
+static Point2D midPoint(Point2D point1, Point2D point2) {
+	Point2D midpoint_;
+	midpoint_.x = (point1.x + point2.x) / 2.0f;
+	midpoint_.y = (point1.y + point2.y) / 2.0f;
+	return midpoint_;
+}
+
+static LineMQ perpendicularToLinePassingThroughPointMQ(LineMQ line, Point2D point) {
+	LineMQ perpendicularLine;
+
+	perpendicularLine.m = -(1.0f / line.m);
+	perpendicularLine.q = (point.x / line.m) + point.y;
+
+	return perpendicularLine;
+}
+
+
 static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
 	float distance;
 	distance = fabsf((- line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax)*(-line1.Ax)));
@@ -278,6 +295,31 @@ static LineMQ lineABC2MQ(LineABC line) {
 	lineMq.m = -line.Ax;
 	lineMq.q = -line.C;
 	return lineMq;
+}
+
+static LineABC perpendicularToLinePassingThroughPointABC(LineABC line, Point2D point) {
+	LineABC perpendicularLine;
+	LineMQ lineMq;
+
+	line = normalizeLineABC2MQ(line);
+
+	if (isLineParallelToYaxis(line)) {
+		perpendicularLine = xAxisABC();
+		perpendicularLine.C = -point.y;
+	}
+	else if (isLineParallelToXaxis(line)) {
+		perpendicularLine = yAxisABC();
+		perpendicularLine.C = -point.x;
+	}
+	else
+	{
+		lineMq = lineABC2MQ(line);
+		lineMq = perpendicularToLinePassingThroughPointMQ(lineMq, point);
+		perpendicularLine = lineMQ2ABC(lineMq);
+	}
+
+
+	return perpendicularLine;
 }
 
 static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
