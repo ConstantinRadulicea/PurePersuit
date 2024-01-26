@@ -58,95 +58,44 @@ static LineABC vectorToLineABC(Vector vec) {
 	return line2;
 }
 
-// return 0 on success
-static int aproximateVector(/*Pixy2& pixy,*/ Vector& vec, float blackTreshold) {
-	int8_t res;
-	Point2D midPoint_;
-	LineABC perpendicularLine, vectorLine;
-	int maxX, maxY, vectorMaxX, vectorMaxY;
-	int xRight, xLeft, yUp, yDown, xFound, yFound;
+// 
+static Vector vectorApproximationSelectionLogic(Vector vec, Point2D approximatedPointFound, Point2D carPosition) {
+	Point2D startVector, endVector, newVectorStart, newVectorEnd;
+	float distanceStartVector, distanceEndVector, distanceApproximatedPointFound;
+	Vector newVector;
 
-	maxX = 315;
-	maxY = 207;
-	vectorMaxX = 78;
-	vectorMaxY = 51;
+	memset(&newVector, 0, sizeof(newVector));
 
-	//res = pixy.changeProg("video");
-	//if (res != PIXY_RESULT_OK) {
-	//	return 1;
-	//}
-	//// write code here
+	startVector.x = (float)vec.m_x0;
+	startVector.y = (float)vec.m_y0;
 
-	midPoint_ = vectorMidPoint(vec);
-	midPoint_.x = (midPoint_.x / (float)vectorMaxX) * (float)maxX;
-	midPoint_.y = (midPoint_.y / (float)vectorMaxY) * (float)maxY;
+	endVector.x = (float)vec.m_x1;
+	endVector.y = (float)vec.m_y1;
 
-	vectorLine = vectorToLineABC(vec);
-	perpendicularLine = perpendicularToLinePassingThroughPointABC(vectorLine, midPoint_);
+	distanceStartVector = euclidianDistance(carPosition, startVector);
+	distanceEndVector = euclidianDistance(carPosition, endVector);
+	distanceApproximatedPointFound = euclidianDistance(carPosition, approximatedPointFound);
 
-	if (!isLineParallelToYaxis(perpendicularLine))
-	{
-		xRight = (int)roundf(midPoint_.x);
-		xLeft = (int)roundf(midPoint_.x-1.0f);
-		while (xRight <= maxX || xLeft >= 0) {
-			if (xRight <= maxX)
-			{
-				yFound = (int)roundf(((-perpendicularLine.Ax) * (float)xRight) - perpendicularLine.C);
-				if (yFound > maxY || yFound < 0) {
-					xRight = maxX + 1;
-					continue;
-				}
-				xFound = xRight;
-				xRight++;
-				// read pixel and do calculations
-			}
-			if (xLeft >= 0)
-			{
-				yFound = (int)roundf(((-perpendicularLine.Ax) * (float)xLeft) - perpendicularLine.C);
-				if (yFound > maxY || yFound < 0) {
-					xLeft = -1;
-					continue;
-				}
-				xFound = xLeft;
-				xLeft--;
-				// read pixel and do calculations
-			}
-		}
+	if (distanceStartVector < distanceEndVector && distanceStartVector < distanceApproximatedPointFound){
+		newVectorStart = startVector;
+		newVectorEnd = approximatedPointFound;
 	}
-	else {
-		yUp = (int)roundf(midPoint_.y);
-		yDown = (int)roundf(midPoint_.y - 1.0f);
-		xFound = midPoint_.x;
-		while (yUp <= maxX || yDown >= 0) {
-			if (yUp <= maxX)
-			{
-				yFound = yUp;
-				yUp++;
-				// read pixel and do calculations
-			}
-			if (yDown >= 0)
-			{
-				yFound = yDown;
-				yDown--;
-				// read pixel and do calculations
-			}
-		}
+	else if (distanceEndVector < distanceStartVector && distanceEndVector < distanceApproximatedPointFound){
+		newVectorStart = endVector;
+		newVectorEnd = approximatedPointFound;
+	}
+	else{
+		newVectorStart = approximatedPointFound;
+		newVectorEnd = endVector;
 	}
 
+	newVector.m_x0 = newVectorStart.x;
+	newVector.m_y0 = newVectorStart.y;
+	newVector.m_x1 = newVectorEnd.x;
+	newVector.m_y1 = newVectorEnd.y;
 
-
-	//res = pixy.changeProg("line");
-	//if (res != PIXY_RESULT_OK) {
-	//	return 1;
-	//}
-	//else {
-	//	return 0;
-	//}
-
-
-	return 0;
+	return newVector;
 }
-
 
 
 
@@ -190,7 +139,7 @@ int main() {
 	line1 = perpendicularToLinePassingThroughPointABC(LineABC{ 2.0f, 1.0f, -5.0f }, Point2D{ 10, 12 });	//-0.5x+1y-7=0
 	line1 = perpendicularToLinePassingThroughPointABC(LineABC{ 2.0f, 1.0f, -5.0f }, Point2D{ -10, -12 });	//-0.5x+1y+7=0
 
-	Vector vec;
+	Vector vec, vecResult;
 	//vec.m_x0 = 30;
 	//vec.m_y0 = 10;
 	//vec.m_x1 = 20;
@@ -198,12 +147,19 @@ int main() {
 
 	//aproximateVector(vec, 0.5f);
 
-	vec.m_x0 = 84;
-	vec.m_y0 = 28;
-	vec.m_x1 = 117;
-	vec.m_y1 = 6;
+	vec.m_x0 = 50;
+	vec.m_y0 = 0;
+	vec.m_x1 = 77;
+	vec.m_y1 = 30;
+	vecResult = vectorApproximationSelectionLogic(vec, Point2D{ 52.0f, 25.0f }, Point2D{ 39.0f, 0.0f });
 
-	aproximateVector(vec, 0.5f);
+
+	vec.m_x0 = 77;
+	vec.m_y0 = 0;
+	vec.m_x1 = 52;
+	vec.m_y1 = 25;
+	vecResult = vectorApproximationSelectionLogic(vec, Point2D{ 50.0f, 0.0f }, Point2D{ 39.0f, 0.0f });
+
 	return 0;
 }
 
