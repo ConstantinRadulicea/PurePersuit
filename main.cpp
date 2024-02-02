@@ -116,7 +116,9 @@ int main() {
 
 	line1 = points2lineABC(Point2D{ 36, 45 }, Point2D{ 53, 48 });
 	line2 = parallelLineAtDistance(line1, 50, 1);
-	bisectorsOfTwoLines(line1, line2, &line3, NULL);
+	bisectorsOfTwoLines(line1, line2, &line3, &line4);
+	angleBetweenLinesABC(yAxisABC(), line3);
+	angleBetweenLinesABC(yAxisABC(), line4);
 
 
 

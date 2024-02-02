@@ -32,6 +32,11 @@ typedef struct IntersectionPoints2D_2
 	int numPoints;
 }IntersectionPoints2D_2;
 
+typedef struct IntersectionLines {
+	Point2D point;
+	int info; // 1: lines are parallel, 2: the lines are equal
+}IntersectionLines;
+
 typedef struct PurePersuitInfo {
 	Point2D carPos;
 	Point2D nextWayPoint;
@@ -104,7 +109,7 @@ static LineABC normalizeLineABC2MQ(LineABC line) {
 		line.By = 1.0f;
 		return line;
 	}
-	if (line.By == 0.0f)
+	if (line.By == 0.0f && line.Ax != 0.0f)
 	{
 		line.C = line.C / line.Ax;
 		line.Ax = 1.0f;
@@ -113,6 +118,28 @@ static LineABC normalizeLineABC2MQ(LineABC line) {
 	return line;
 }
 
+static int arePerpenticularABC(LineABC line1, LineABC line2) {
+	line2 = normalizeLineABC2MQ(line2);
+	line1 = normalizeLineABC2MQ(line1);
+
+	if (((-line1.Ax) * (-line2.Ax)) == -1.0f) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+static int areParallel(LineABC line1, LineABC line2) {
+	line2 = normalizeLineABC2MQ(line2);
+	line1 = normalizeLineABC2MQ(line1);
+	if (line1.Ax == line2.Ax) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
 /*
  * side:
  *		1: new line on right or bottom side
@@ -492,6 +519,30 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 	}
 
 	return points;
+}
+
+static IntersectionLines intersectionLinesABC(LineABC line1, LineABC line2) {
+	IntersectionLines inters;
+
+	memset(&inters, 0, sizeof(inters));
+
+	if ((line1.Ax * line2.By - line2.Ax * line1.By) == 0.0f){
+		line2 = normalizeLineABC2MQ(line2);
+		line1 = normalizeLineABC2MQ(line1);
+		if (memcmp(&line1, &line2, sizeof(inters) == 0))
+		{
+			inters.info = 2;
+		}
+		else {
+			inters.info = 1;
+		}
+		return inters;
+	}
+
+	inters.point.x = (line1.By * line2.C - line2.By * line1.C) / (line1.Ax * line2.By - line2.Ax * line1.By);
+	inters.point.y = (line1.C * line2.Ax - line2.C * line1.Ax) / (line1.Ax * line2.By - line2.Ax * line1.By);
+
+	return inters;
 }
 
 static float triangleAngleA(float AC, float CB, float BA) {
