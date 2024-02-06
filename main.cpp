@@ -58,6 +58,60 @@ static LineABC vectorToLineABC(Vector vec) {
 	return line2;
 }
 
+static float calculateLookAheadDistance_noPID(float minDistance, float maxDistance, LineABC laneMiddleLine) {
+	float angleCurrentTrajectoryAndMiddleLane, newLookAheadDistance, distanceSpan;
+	LineABC currentTrajectory;
+	distanceSpan = maxDistance - minDistance;
+
+	currentTrajectory = yAxisABC();
+
+	angleCurrentTrajectoryAndMiddleLane = angleBetweenLinesABC(currentTrajectory, laneMiddleLine);
+
+	newLookAheadDistance = minDistance + ((((float)M_PI_2 - angleCurrentTrajectoryAndMiddleLane) / (float)M_PI_2) * distanceSpan);
+
+	newLookAheadDistance = MAX(newLookAheadDistance, minDistance);
+	newLookAheadDistance = MIN(newLookAheadDistance, maxDistance);
+
+	return newLookAheadDistance;
+}
+/*
+static float calculateLookAheadDistancePID(PID pid, float minDistance, float maxDistance, LineABC laneMiddleLine) {
+	float angleCurrentTrajectoryAndMiddleLane, newLookAheadDistance, distanceSpan;
+	float pidIn, pidOut;
+	LineABC currentTrajectory;
+	distanceSpan = maxDistance - minDistance;
+
+	currentTrajectory = yAxisABC();
+
+	angleCurrentTrajectoryAndMiddleLane = angleBetweenLinesABC(currentTrajectory, laneMiddleLine);
+
+	pidOut = MAX(pidOut, 0.0f);
+	pidOut = MIN(pidOut, 1.0f);
+
+	newLookAheadDistance = minDistance + (pidOut * distanceSpan);
+
+	newLookAheadDistance = MAX(newLookAheadDistance, minDistance);
+	newLookAheadDistance = MIN(newLookAheadDistance, maxDistance);
+
+	return newLookAheadDistance;
+}
+*/
+static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteeringWheelAngle, float steeringWheelAngle) {
+	float newCarSpeed, speedSpan;
+
+	speedSpan = maxSpeed - minSpeed;
+	maxSteeringWheelAngle = fabsf(maxSteeringWheelAngle);
+	steeringWheelAngle = fabsf(steeringWheelAngle);
+	steeringWheelAngle = MIN(steeringWheelAngle, maxSteeringWheelAngle);
+	
+	newCarSpeed = minSpeed + (((maxSteeringWheelAngle - steeringWheelAngle) / maxSteeringWheelAngle) * speedSpan);
+
+	newCarSpeed = MAX(newCarSpeed, minSpeed);
+	newCarSpeed = MIN(newCarSpeed, maxSpeed);
+
+	return newCarSpeed;
+}
+
 
 int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
@@ -101,6 +155,18 @@ int main() {
 	line1 = perpendicularToLinePassingThroughPointABC(LineABC{ 2.0f, 1.0f, -5.0f }, Point2D{ -10, -12 });	//-0.5x+1y+7=0
 
 	Vector vec, vecResult;
+
+
+	calculateCarSpeed(100, 110, 90, 0);
+	calculateCarSpeed(100, 110, 90, 20);
+	calculateCarSpeed(100, 110, 90, 45);
+	calculateCarSpeed(100, 110, 90, 60);
+	calculateCarSpeed(100, 110, 90, 90);
+
+
+	calculateLookAheadDistance(5, 30, LineABC{ 2, 1, -7 });
+	calculateLookAheadDistance(5, 30, yAxisABC());
+	calculateLookAheadDistance(5, 30, xAxisABC());
 
 
 	return 0;
