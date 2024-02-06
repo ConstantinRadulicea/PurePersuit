@@ -149,6 +149,8 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 	LineABC parallelLine;
 	float abs_q1_minus_q2, newQ;
 
+	newQ = 0.0f;
+
 	line = normalizeLineABC2MQ(line);
 
 	parallelLine = line;

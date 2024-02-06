@@ -58,47 +58,6 @@ static LineABC vectorToLineABC(Vector vec) {
 	return line2;
 }
 
-// 
-static Vector vectorApproximationSelectionLogic(Vector vec, Point2D approximatedPointFound, Point2D carPosition) {
-	Point2D startVector, endVector, newVectorStart, newVectorEnd;
-	float distanceStartVector, distanceEndVector, distanceApproximatedPointFound;
-	Vector newVector;
-
-	memset(&newVector, 0, sizeof(newVector));
-
-	startVector.x = (float)vec.m_x0;
-	startVector.y = (float)vec.m_y0;
-
-	endVector.x = (float)vec.m_x1;
-	endVector.y = (float)vec.m_y1;
-
-	distanceStartVector = euclidianDistance(carPosition, startVector);
-	distanceEndVector = euclidianDistance(carPosition, endVector);
-	distanceApproximatedPointFound = euclidianDistance(carPosition, approximatedPointFound);
-
-	if (distanceStartVector < distanceEndVector && distanceStartVector < distanceApproximatedPointFound){
-		newVectorStart = startVector;
-		newVectorEnd = approximatedPointFound;
-	}
-	else if (distanceEndVector < distanceStartVector && distanceEndVector < distanceApproximatedPointFound){
-		newVectorStart = endVector;
-		newVectorEnd = approximatedPointFound;
-	}
-	else{
-		newVectorStart = approximatedPointFound;
-		newVectorEnd = endVector;
-	}
-
-	newVector.m_x0 = newVectorStart.x;
-	newVector.m_y0 = newVectorStart.y;
-	newVector.m_x1 = newVectorEnd.x;
-	newVector.m_y1 = newVectorEnd.y;
-
-	return newVector;
-}
-
-
-
 
 int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
@@ -142,25 +101,7 @@ int main() {
 	line1 = perpendicularToLinePassingThroughPointABC(LineABC{ 2.0f, 1.0f, -5.0f }, Point2D{ -10, -12 });	//-0.5x+1y+7=0
 
 	Vector vec, vecResult;
-	//vec.m_x0 = 30;
-	//vec.m_y0 = 10;
-	//vec.m_x1 = 20;
-	//vec.m_y1 = 30;
 
-	//aproximateVector(vec, 0.5f);
-
-	vec.m_x0 = 50;
-	vec.m_y0 = 0;
-	vec.m_x1 = 77;
-	vec.m_y1 = 30;
-	vecResult = vectorApproximationSelectionLogic(vec, Point2D{ 52.0f, 25.0f }, Point2D{ 39.0f, 0.0f });
-
-
-	vec.m_x0 = 77;
-	vec.m_y0 = 0;
-	vec.m_x1 = 52;
-	vec.m_y1 = 25;
-	vecResult = vectorApproximationSelectionLogic(vec, Point2D{ 50.0f, 0.0f }, Point2D{ 39.0f, 0.0f });
 
 	return 0;
 }
