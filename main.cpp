@@ -1,3 +1,20 @@
+﻿/*
+* Copyright 2023 Constantin Dumitru Petre RĂDULICEA
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+
 #include "PurePursuitGeometry.h"
 #include <cstdint>
 
@@ -74,28 +91,35 @@ static float calculateLookAheadDistance_noPID(float minDistance, float maxDistan
 
 	return newLookAheadDistance;
 }
-/*
-static float calculateLookAheadDistancePID(PID pid, float minDistance, float maxDistance, LineABC laneMiddleLine) {
-	float angleCurrentTrajectoryAndMiddleLane, newLookAheadDistance, distanceSpan;
-	float pidIn, pidOut;
-	LineABC currentTrajectory;
-	distanceSpan = maxDistance - minDistance;
+//
+//
+//static float calculateLookAheadDistancePID(PID pid, float minDistance, float maxDistance, LineABC laneMiddleLine) {
+//	float angleCurrentTrajectoryAndMiddleLane, newLookAheadDistance, distanceSpan;
+//	float pidIn, pidOut;
+//	LineABC currentTrajectory;
+//
+//	/*
+//	* setpoint: M_PI_2
+//	* PID input: angleCurrentTrajectoryAndMiddleLane
+//	*/
+//
+//	distanceSpan = maxDistance - minDistance;
+//	currentTrajectory = yAxisABC();
+//	angleCurrentTrajectoryAndMiddleLane = angleBetweenLinesABC(currentTrajectory, laneMiddleLine);
+//
+//	pidOut = fabs(pidOut);
+//	pidOut = pidOut / M_PI_2;
+//	pidOut = MAX(pidOut, 0.0f);
+//	pidOut = MIN(pidOut, 1.0f);
+//
+//	newLookAheadDistance = minDistance + (pidOut * distanceSpan);
+//
+//	newLookAheadDistance = MAX(newLookAheadDistance, minDistance);
+//	newLookAheadDistance = MIN(newLookAheadDistance, maxDistance);
+//
+//	return newLookAheadDistance;
+//}
 
-	currentTrajectory = yAxisABC();
-
-	angleCurrentTrajectoryAndMiddleLane = angleBetweenLinesABC(currentTrajectory, laneMiddleLine);
-
-	pidOut = MAX(pidOut, 0.0f);
-	pidOut = MIN(pidOut, 1.0f);
-
-	newLookAheadDistance = minDistance + (pidOut * distanceSpan);
-
-	newLookAheadDistance = MAX(newLookAheadDistance, minDistance);
-	newLookAheadDistance = MIN(newLookAheadDistance, maxDistance);
-
-	return newLookAheadDistance;
-}
-*/
 static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteeringWheelAngle, float steeringWheelAngle) {
 	float newCarSpeed, speedSpan;
 
@@ -115,7 +139,7 @@ static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteering
 
 int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
-	LineABC line1, line2, line3, line4;
+	LineABC line1, line2, line3, line4, ottusangle, acutangle, midLine;
 
 	LineMQ wayPoints = { -3.5f, 625 };
 	// LineABC wayPointsAbc = { 3.5f, 1, -625 };
@@ -164,9 +188,25 @@ int main() {
 	calculateCarSpeed(100, 110, 90, 90);
 
 
-	calculateLookAheadDistance(5, 30, LineABC{ 2, 1, -7 });
-	calculateLookAheadDistance(5, 30, yAxisABC());
-	calculateLookAheadDistance(5, 30, xAxisABC());
+	calculateLookAheadDistance_noPID(5, 30, LineABC{ 2, 1, -7 });
+	calculateLookAheadDistance_noPID(5, 30, yAxisABC());
+	calculateLookAheadDistance_noPID(5, 30, xAxisABC());
+
+
+	line1 = points2lineABC(Point2D{ 22, 20 }, Point2D{ 36, 34 });
+	line2 = points2lineABC(Point2D{ 41, 7 }, Point2D{ 63, 21 });
+
+	bisectorsOfTwoLines(line1, line2, &acutangle, &ottusangle);
+
+	float angle1, angle2, angle3, angle4;
+	angle1 = angleBetweenLinesABC(line1, acutangle);
+	angle2 = angleBetweenLinesABC(line1, ottusangle);
+
+	angle3 = angleBetweenLinesABC(yAxisABC(), acutangle);
+	angle4 = angleBetweenLinesABC(yAxisABC(), ottusangle);
+	
+
+
 
 
 	return 0;
