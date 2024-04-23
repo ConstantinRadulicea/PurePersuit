@@ -14,6 +14,9 @@
 * limitations under the License.
 */
 
+
+
+
 #ifndef __PUREPURSUITGEOMETRY_H__
 #define __PUREPURSUITGEOMETRY_H__
 
@@ -22,8 +25,9 @@
 
 #include <math.h>
 #include <string.h>
-#include <math.h>
-#include <corecrt_math_defines.h>
+
+#define M_PI       3.14159265358979323846   // pi
+#define M_PI_2     1.57079632679489661923   // pi/2
 
 typedef struct LineMQ {
 	float m;
@@ -102,11 +106,11 @@ static LineMQ perpendicularToLinePassingThroughPointMQ(LineMQ line, Point2D poin
 
 static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
 	float distance;
-	distance = fabsf((- line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax)*(-line1.Ax)));
+	distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
 	return distance;
 }
 
-static Point2D mirrorImage( LineABC line, Point2D point)
+static Point2D mirrorImage(LineABC line, Point2D point)
 {
 	Point2D mirrorPoint_;
 	float temp;
@@ -241,7 +245,7 @@ static float angleBetweenLines(LineMQ line1, LineMQ line2) {
 
 // https://www.math-only-math.com/equations-of-the-bisectors-of-the-angles-between-two-straight-lines.html
 //acutangle is the bisector when the lines are parallel
-static void bisectorsOfTwoLines(LineABC line1, LineABC line2, LineABC *acuteAngle, LineABC *ottuseAngle) {
+static void bisectorsOfTwoLines(LineABC line1, LineABC line2, LineABC* acuteAngle, LineABC* ottuseAngle) {
 	float a1, a2, b1, b2, c1, c2;
 	float aa1, aa2, bb1, bb2, cc1, cc2;
 	float leftDenominator, rightDenominator;
@@ -326,7 +330,7 @@ static LineMQ points2line(Point2D point1, Point2D point2) {
 	return line;
 }
 
-static LineABC lineMQ2ABC(LineMQ line){
+static LineABC lineMQ2ABC(LineMQ line) {
 	LineABC lineAbc;
 	lineAbc.Ax = -line.m;
 	lineAbc.By = 1.0f;
@@ -424,7 +428,7 @@ static LineABC points2lineABC(Point2D point1, Point2D point2) {
 
 static float euclidianDistance(Point2D point1, Point2D point2) {
 	float distance;
-	distance = sqrtf(((point2.x - point1.x) * (point2.x - point1.x)) + ((point2.y - point1.y)* (point2.y - point1.y)));
+	distance = sqrtf(((point2.x - point1.x) * (point2.x - point1.x)) + ((point2.y - point1.y) * (point2.y - point1.y)));
 	return distance;
 }
 
@@ -501,10 +505,10 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 		c = ((-2.0f) * circleCenter.y * line.q) + (line.q * line.q) + (circleCenter.x * circleCenter.x) + (circleCenter.y * circleCenter.y) - (circleRadius * circleRadius);
 	}
 	else {
-		x_ = (- lineAbc.C) / lineAbc.Ax;
+		x_ = (-lineAbc.C) / lineAbc.Ax;
 		a = 1.0f;
 		b = -2.0f * circleCenter.y;
-		c = (x_ * x_) + (-2.0f * circleCenter.x * x_)  + (circleCenter.x * circleCenter.x) - (circleRadius * circleRadius);
+		c = (x_ * x_) + (-2.0f * circleCenter.x * x_) + (circleCenter.x * circleCenter.x) - (circleRadius * circleRadius);
 	}
 
 
@@ -544,7 +548,7 @@ static IntersectionLines intersectionLinesABC(LineABC line1, LineABC line2) {
 
 	memset(&inters, 0, sizeof(inters));
 
-	if ((line1.Ax * line2.By - line2.Ax * line1.By) == 0.0f){
+	if ((line1.Ax * line2.By - line2.Ax * line1.By) == 0.0f) {
 		line2 = normalizeLineABC2MQ(line2);
 		line1 = normalizeLineABC2MQ(line1);
 		if (memcmp(&line1, &line2, sizeof(inters) == 0))
@@ -652,7 +656,7 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 	else {
 		info.turnPoint.x -= info.turnRadius;
 	}
-	
+
 	return info;
 }
 
@@ -697,4 +701,3 @@ static PurePersuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, 
 
 
 #endif // !__PUREPURSUITGEOMETRY_H__
-

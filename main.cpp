@@ -17,6 +17,8 @@
 
 #include "PurePursuitGeometry.h"
 #include <cstdint>
+#include <vector>
+#include <string.h>
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -34,6 +36,15 @@
 #define STEERING_SERVO_MAX_ANGLE MAX(fabsf(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_RIGHT), fabsf(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_LEFT))
 
 
+static float lane_width_vector_unit_real;
+static float lookahead_min_distance_cm;
+static float lookahead_max_distance_cm;
+static float lookahead_pid_kp;
+static float emergency_break_distance_cm;
+static float min_speed;
+static float max_speed;
+static float black_color_treshold; // 0=black, 1=white
+static float car_length_cm;
 
 
 
@@ -75,22 +86,76 @@ static LineABC vectorToLineABC(Vector vec) {
 	return line2;
 }
 
-static float calculateLookAheadDistance_noPID(float minDistance, float maxDistance, LineABC laneMiddleLine) {
-	float angleCurrentTrajectoryAndMiddleLane, newLookAheadDistance, distanceSpan;
-	LineABC currentTrajectory;
-	distanceSpan = maxDistance - minDistance;
+/*
+* str:
+* C-string beginning with the representation of a floating-point number.
+* endptr:
+* Reference to an already allocated object of type char*, whose value is set by the function to the next character in str after the numerical value.
+* This parameter can also be a null pointer, in which case it is not used.
+*/
+float parseNextFloat(char* str, size_t strSize, char variableTerminator, char** endptr, int* success) {
+	char* nextTerminator;
+	char* pEnd;
+	float result;
+	nextTerminator = (char*)memchr(str, (int)variableTerminator, strSize);
+	if (str == nextTerminator && strSize == 1) {
+		if (endptr) {
+			*endptr = nextTerminator;
+		}
+		if (success) {
+			*success = 0;
+		}
 
-	currentTrajectory = yAxisABC();
+		return 0.0f;
+	}
+	if (nextTerminator) {
+		*nextTerminator = '\0';
+	}
+	else {
+		nextTerminator = str + strSize;
+	}
+	
+	result = strtof(str, &pEnd);
 
-	angleCurrentTrajectoryAndMiddleLane = angleBetweenLinesABC(currentTrajectory, laneMiddleLine);
-
-	newLookAheadDistance = minDistance + ((((float)M_PI_2 - angleCurrentTrajectoryAndMiddleLane) / (float)M_PI_2) * distanceSpan);
-
-	newLookAheadDistance = MAX(newLookAheadDistance, minDistance);
-	newLookAheadDistance = MIN(newLookAheadDistance, maxDistance);
-
-	return newLookAheadDistance;
+	if (pEnd != nextTerminator) {
+		// handle incomplete parse
+		pEnd += 1;
+		*success = 0;
+		if (endptr) {
+			*endptr = pEnd;
+		}
+	}
+	else {
+		pEnd += 1;
+		*success = 1;
+		if (endptr) {
+			*endptr = pEnd;
+		}
+	}
+	return result;
 }
+
+// 60.0;16.0;30.0;4.0;70.0;96.0;112.0;0.2;17.5
+void parseAndSetGlobalVariables(std::vector<char>& rawData, char variableTerminator = ';') {
+	char* pEnd;
+	int resultSuccess;
+	pEnd = rawData.data();
+	lane_width_vector_unit_real = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	lookahead_min_distance_cm = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	lookahead_max_distance_cm = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	lookahead_pid_kp = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	min_speed = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	max_speed = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	black_color_treshold = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+	car_length_cm = parseNextFloat(pEnd, (rawData.size() + rawData.data()) - pEnd, variableTerminator, &pEnd, &resultSuccess);
+
+}
+
+
+
+
+
+
 //
 //
 //static float calculateLookAheadDistancePID(PID pid, float minDistance, float maxDistance, LineABC laneMiddleLine) {
@@ -188,9 +253,9 @@ int main() {
 	calculateCarSpeed(100, 110, 90, 90);
 
 
-	calculateLookAheadDistance_noPID(5, 30, LineABC{ 2, 1, -7 });
-	calculateLookAheadDistance_noPID(5, 30, yAxisABC());
-	calculateLookAheadDistance_noPID(5, 30, xAxisABC());
+	//calculateLookAheadDistance_noPID(5, 30, LineABC{ 2, 1, -7 });
+	//calculateLookAheadDistance_noPID(5, 30, yAxisABC());
+	//calculateLookAheadDistance_noPID(5, 30, xAxisABC());
 
 
 	line1 = points2lineABC(Point2D{ 22, 20 }, Point2D{ 36, 34 });
@@ -206,8 +271,12 @@ int main() {
 	angle4 = angleBetweenLinesABC(yAxisABC(), ottusangle);
 	
 
-
-
+	char number[] = "60.0;16.0;30.0;4.0;70.0;96.0;112.0;0.2;17.5";
+	std::vector<char> data;
+	data.resize(strlen(number) + 1);
+	memcpy(data.data(), number, strlen(number) + 1);
+	data.pop_back();
+	parseAndSetGlobalVariables(data, ';');
 
 	return 0;
 }
