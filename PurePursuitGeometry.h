@@ -20,19 +20,25 @@
 #ifndef __PUREPURSUITGEOMETRY_H__
 #define __PUREPURSUITGEOMETRY_H__
 
-
-
-
 #include <math.h>
 #include <string.h>
 
 #define M_PI       3.14159265358979323846   // pi
 #define M_PI_2     1.57079632679489661923   // pi/2
 
+#define INCONSISTENT_ECUATION_SYSTEM 1
+#define CONSISTENT_ECUATION_SYSTEM 2
+
 typedef struct LineMQ {
 	float m;
 	float q;
 }LineMQ;
+
+typedef struct ParabolaABC {
+	float A;
+	float B;
+	float C;
+};
 
 typedef struct LineABC {
 	float Ax;
@@ -85,6 +91,176 @@ static LineABC yAxisABC() {
 	line.By = 0.0f;
 	line.C = 0.0f;
 	return line;
+}
+
+// polynomial_coefficients[0] = x^2
+// polynomial_coefficients[1] = x
+// polynomial_coefficients[3] = 1
+// polynomial_degree = 2
+static Point2D polyval(float* polynomial_coefficients, int polynomial_degree, float x) {
+	float y = 0.0f;
+	float x_power = 1.0f;
+	Point2D result;
+
+	for (int i = polynomial_degree; i >= 0; i--) {
+		y += polynomial_coefficients[i] * x_power;
+		x_power = x_power * x;
+	}
+	result.x = x;
+	result.y = y;
+	return result;
+}
+
+
+static int gaussianElimination3(float A[3][3 + 1], float x[3], int n) {
+	int j, i, k;
+	int pivot_row;
+	float factor;
+	float temp;
+	float sum;
+
+	// partial_pivot
+	for (i = 0; i < n; i++) {
+		pivot_row = i;
+		for (j = i + 1; j < n; j++) {
+			if (fabsf(A[j][i]) > fabsf(A[pivot_row][i])) {
+				pivot_row = j;
+			}
+		}
+		if (pivot_row != i) {
+			for (j = i; j <= n; j++) {
+				temp = A[i][j];
+				A[i][j] = A[pivot_row][j];
+				A[pivot_row][j] = temp;
+			}
+		}
+		for (j = i + 1; j < n; j++) {
+			factor = A[j][i] / A[i][i];
+			for (k = i; k <= n; k++) {
+				A[j][k] -= factor * A[i][k];
+			}
+		}
+	}
+
+
+	for (i = 0; i < n; i++)
+	{
+		sum = 0;
+		for (j = 0; j < n; j++)
+		{
+			sum += A[i][j];
+		}
+		if ((sum == 0.0f) && (A[i][n] != 0.0f)) {
+			memset(x, 0, sizeof(float) * n);
+			return INCONSISTENT_ECUATION_SYSTEM;
+		}
+	}
+
+	// back_substitute
+	for (i = n - 1; i >= 0; i--) {
+		sum = 0;
+		for (j = i + 1; j < n; j++) {
+			sum += A[i][j] * x[j];
+		}
+		x[i] = (A[i][n] - sum) / A[i][i];
+	}
+	return CONSISTENT_ECUATION_SYSTEM;
+}
+static int gaussianElimination2(float A[2][2 + 1], float x[2], int n) {
+	int j, i, k;
+	int pivot_row;
+	float factor;
+	float temp;
+	float sum;
+
+	// partial_pivot
+	for (i = 0; i < n; i++) {
+		pivot_row = i;
+		for (j = i + 1; j < n; j++) {
+			if (fabsf(A[j][i]) > fabsf(A[pivot_row][i])) {
+				pivot_row = j;
+			}
+		}
+		if (pivot_row != i) {
+			for (j = i; j <= n; j++) {
+				temp = A[i][j];
+				A[i][j] = A[pivot_row][j];
+				A[pivot_row][j] = temp;
+			}
+		}
+		for (j = i + 1; j < n; j++) {
+			factor = A[j][i] / A[i][i];
+			for (k = i; k <= n; k++) {
+				A[j][k] -= factor * A[i][k];
+			}
+		}
+	}
+
+
+	for (i = 0; i < n; i++)
+	{
+		sum = 0;
+		for (j = 0; j < n; j++)
+		{
+			sum += A[i][j];
+		}
+		if ((sum == 0.0f) && (A[i][n] != 0.0f)) {
+			memset(x, 0, sizeof(float) * n);
+			return INCONSISTENT_ECUATION_SYSTEM;
+		}
+	}
+
+	// back_substitute
+	for (i = n - 1; i >= 0; i--) {
+		sum = 0;
+		for (j = i + 1; j < n; j++) {
+			sum += A[i][j] * x[j];
+		}
+		x[i] = (A[i][n] - sum) / A[i][i];
+	}
+	return CONSISTENT_ECUATION_SYSTEM;
+}
+
+
+static ParabolaABC points2parabola_3(Point2D point1, Point2D point2, Point2D point3) {
+	ParabolaABC resultParabola;
+	int res;
+	float A[3][3 + 1] = { {point1.x * point1.x, point1.x, 1.0f, point1.y},
+						  {point2.x * point2.x, point2.x, 1.0f, point2.y},
+						  {point3.x * point3.x, point3.x, 1.0f, point3.y}
+	};
+	float x[3];
+
+	res = gaussianElimination3(A, x, 3);
+	if (res != CONSISTENT_ECUATION_SYSTEM) {
+		memset(&resultParabola, 0, sizeof(ParabolaABC));
+		return resultParabola;
+	}
+	resultParabola.A = x[0];
+	resultParabola.B = x[1];
+	resultParabola.C = x[2];
+
+	return resultParabola;
+}
+
+static int isValidParabola(ParabolaABC parabola) {
+	if (parabola.A == parabola.B == parabola.C == 0) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
+}
+
+static Point2D parabolaVertex(ParabolaABC parabola) {
+	Point2D vertex;
+	float delta;
+	// (h, k) = (-b/2a, -D/4a)
+
+	delta = (parabola.B * parabola.B) - 4.0f * (parabola.A * parabola.C);
+	vertex.x = (-parabola.B) / (2.0f * parabola.A);
+	vertex.y = (-delta) / (4.0f * parabola.A);
+	return vertex;
 }
 
 static Point2D midPoint(Point2D point1, Point2D point2) {
