@@ -18,6 +18,7 @@
 #define __GEOMETRY_H__
 
 #include <math.h>
+#include <float.h>
 #include <string.h>
 
 #define M_PI       3.14159265358979323846   // pi
@@ -94,6 +95,15 @@ static Point2D polyval(float* polynomial_coefficients, int polynomial_degree, fl
 	return result;
 }
 
+static int floatCmp(float num1, float num2) {
+	if (fabs(num1 - num2) < FLT_EPSILON) {
+		return 0;
+	}
+	else if (num1 > num2) {
+		return 1;
+	}
+	return -1;
+}
 
 static int gaussianElimination3(float A[3][3 + 1], float x[3], int n) {
 	int j, i, k;
@@ -204,7 +214,6 @@ static int gaussianElimination2(float A[2][2 + 1], float x[2], int n) {
 	return CONSISTENT_ECUATION_SYSTEM;
 }
 
-
 static ParabolaABC points2parabola_3(Point2D point1, Point2D point2, Point2D point3) {
 	ParabolaABC resultParabola;
 	int res;
@@ -227,7 +236,7 @@ static ParabolaABC points2parabola_3(Point2D point1, Point2D point2, Point2D poi
 }
 
 static int isValidParabola(ParabolaABC parabola) {
-	if (parabola.A == parabola.B == parabola.C == 0) {
+	if ((floatCmp(parabola.A, parabola.B) == 0) && (floatCmp(parabola.A, parabola.C) == 0) && (floatCmp(parabola.A, 0.0f) == 0)) {
 		return 0;
 	}
 	else {
@@ -262,7 +271,6 @@ static LineMQ perpendicularToLinePassingThroughPointMQ(LineMQ line, Point2D poin
 	return perpendicularLine;
 }
 
-
 static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
 	float distance;
 	distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
@@ -282,14 +290,15 @@ static Point2D mirrorImageABC(LineABC line, Point2D point)
 }
 
 static LineABC normalizeLineABC2MQ(LineABC line) {
-	if (line.By != 1.0f && line.By != 0.0f) {
+	if (floatCmp(line.By, 1.0f) != 0 && floatCmp(line.By, 0.0f) != 0) {
 		line.C = line.C / line.By;
 		line.Ax = line.Ax / line.By;
 		line.By = 1.0f;
 		return line;
 	}
-	if (line.By == 0.0f && line.Ax != 0.0f)
+	if (floatCmp(line.By, 0.0f) == 0 && floatCmp(line.Ax, 0.0f) != 0)
 	{
+		line.By = 0.0f;
 		line.C = line.C / line.Ax;
 		line.Ax = 1.0f;
 		return line;
@@ -301,7 +310,7 @@ static int arePerpenticularABC(LineABC line1, LineABC line2) {
 	line2 = normalizeLineABC2MQ(line2);
 	line1 = normalizeLineABC2MQ(line1);
 
-	if (((-line1.Ax) * (-line2.Ax)) == -1.0f) {
+	if (floatCmp((-line1.Ax) * (-line2.Ax), -1.0f) == 0.0f) {
 		return 1;
 	}
 	else {
@@ -312,7 +321,8 @@ static int arePerpenticularABC(LineABC line1, LineABC line2) {
 static int areParallelABC(LineABC line1, LineABC line2) {
 	line2 = normalizeLineABC2MQ(line2);
 	line1 = normalizeLineABC2MQ(line1);
-	if (line1.Ax == line2.Ax) {
+	
+	if (floatCmp(line1.Ax, line2.Ax) == 0.0f) {
 		return 1;
 	}
 	else {
@@ -336,11 +346,11 @@ static LineABC parallelLineAtDistanceABC(LineABC line, float distance, int side)
 	abs_q1_minus_q2 = distance * sqrtf(1.0f + ((-line.Ax) * (-line.Ax)));
 	if (side > 0)
 	{
-		if (line.By == 0.0f)	//		|.
+		if (floatCmp(line.By, 0.0f) == 0)	//		|.
 		{
 			newQ = (-line.C) + distance;
 		}
-		else if ((-line.Ax) == 0.0f) //		-.
+		else if (floatCmp((-line.Ax), 0.0f) == 0) //		-.
 		{
 			newQ = (-line.C) - distance;
 		}
@@ -355,11 +365,11 @@ static LineABC parallelLineAtDistanceABC(LineABC line, float distance, int side)
 	}
 	else
 	{
-		if (line.By == 0.0f)	//		|.
+		if (floatCmp(line.By, 0.0f) == 0)	//		|.
 		{
 			newQ = (-line.C) - distance;
 		}
-		else if ((-line.Ax) == 0.0f) //		-.
+		else if (floatCmp((-line.Ax), 0.0f) == 0) //		-.
 		{
 			newQ = (-line.C) + distance;
 		}
@@ -377,7 +387,8 @@ static LineABC parallelLineAtDistanceABC(LineABC line, float distance, int side)
 }
 
 static int isLineParallelToXaxisABC(LineABC line) {
-	if (line.Ax == 0.0f && line.By != 0.0f)
+	
+	if (floatCmp(line.Ax, 0.0f) == 0 && floatCmp(line.By, 0.0f) != 0)
 	{
 		return 1;
 	}
@@ -387,7 +398,7 @@ static int isLineParallelToXaxisABC(LineABC line) {
 }
 
 static int isLineParallelToYaxisABC(LineABC line) {
-	if (line.By == 0.0f && line.Ax != 0.0f)
+	if (floatCmp(line.By, 0.0f) == 0 && floatCmp(line.Ax, 0.0f) != 0)
 	{
 		return 1;
 	}
@@ -396,7 +407,7 @@ static int isLineParallelToYaxisABC(LineABC line) {
 	}
 }
 
-static float angleBetweenLinesABC(LineMQ line1, LineMQ line2) {
+static float angleBetweenLinesMQ(LineMQ line1, LineMQ line2) {
 	float angle;
 	angle = atanf(fabsf((line1.m - line2.m)) / (1.0f + (line1.m * line2.m)));
 	return angle;
@@ -416,15 +427,14 @@ static void bisectorsOfTwoLinesABC(LineABC line1, LineABC line2, LineABC* acuteA
 	a2 = line2.Ax;
 	b2 = line2.By;
 	c2 = line2.C;
-
-	if (c1 < 0.0f)
-	{
+	
+	
+	if (floatCmp(c1, 0.0f) < 0) {
 		a1 = -a1;
 		b1 = -b1;
 		c1 = -c1;
 	}
-	if (c2 < 0.0f)
-	{
+	if (floatCmp(c2, 0.0f) < 0) {
 		a2 = -a2;
 		b2 = -b2;
 		c2 = -c2;
@@ -444,8 +454,8 @@ static void bisectorsOfTwoLinesABC(LineABC line1, LineABC line2, LineABC* acuteA
 	cc2 = (rightDenominator * c1) + (leftDenominator * c2);
 
 	gg = (a1 * a2) + (b1 * b2);
-
-	if (gg >= 0.0f)
+	
+	if (floatCmp(gg, 0.0f) >= 0)
 	{
 		if (ottuseAngle)
 		{
@@ -460,7 +470,7 @@ static void bisectorsOfTwoLinesABC(LineABC line1, LineABC line2, LineABC* acuteA
 			acuteAngle->C = cc2;
 		}
 	}
-	else if (gg < 0.0f) {
+	else if (floatCmp(gg, 0.0f) < 0) {
 		if (acuteAngle)
 		{
 			acuteAngle->Ax = aa1;
@@ -549,7 +559,7 @@ static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
 		line1Mq = lineABC2MQ(line2);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
-		angle = M_PI_2 - angleBetweenLinesABC(line1Mq, line2Mq);
+		angle = M_PI_2 - angleBetweenLinesMQ(line1Mq, line2Mq);
 	}
 	else if (isLineParallelToYaxisABC(line2)) {
 		if (isLineParallelToXaxisABC(line1)) {
@@ -561,12 +571,12 @@ static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
 		line1Mq = lineABC2MQ(line1);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
-		angle = M_PI_2 - angleBetweenLinesABC(line1Mq, line2Mq);
+		angle = M_PI_2 - angleBetweenLinesMQ(line1Mq, line2Mq);
 	}
 	else {
 		line1Mq = lineABC2MQ(line1);
 		line2Mq = lineABC2MQ(line2);
-		angle = angleBetweenLinesABC(line1Mq, line2Mq);
+		angle = angleBetweenLinesMQ(line1Mq, line2Mq);
 	}
 
 	return angle;
@@ -575,7 +585,8 @@ static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
 static LineABC points2lineABC(Point2D point1, Point2D point2) {
 	LineMQ lineMq;
 	LineABC lineAbc;
-	if (point1.x == point2.x) { // perpendicular to y axis
+	
+	if (floatCmp(point1.x, point2.x) == 0) { // perpendicular to y axis
 		lineAbc = yAxisABC();
 		lineAbc.C = -point1.x;
 		return lineAbc;
@@ -601,7 +612,8 @@ static float distance2lineABC(Point2D point, LineABC lineAbc) {
 	float distance;
 	LineMQ line;
 	Point2D point2Temp;
-	if (lineAbc.By == 0.0f)
+	
+	if (floatCmp(lineAbc.By, 0.0f) == 0)
 	{
 		lineAbc = normalizeLineABC2MQ(lineAbc);
 		point2Temp.y = point.y;
@@ -611,6 +623,15 @@ static float distance2lineABC(Point2D point, LineABC lineAbc) {
 	line = lineABC2MQ(lineAbc);
 	distance = distance2lineMQ(point, line);
 	return distance;
+}
+
+static int isPointOnLineABC(Point2D point, LineABC lineAbc) {
+	float result;
+	result = (lineAbc.Ax * point.x) + (lineAbc.By * point.y) + lineAbc.C;
+	if (floatCmp(result, 0.0f) == 0) {
+		return 1;
+	}
+	return 0;
 }
 
 static IntersectionPoints2D_2 intersectionLineCircleMQ(Point2D circleCenter, float circleRadius, LineMQ line) {
@@ -625,12 +646,13 @@ static IntersectionPoints2D_2 intersectionLineCircleMQ(Point2D circleCenter, flo
 	c = ((-2.0f) * circleCenter.y * line.q) + (line.q * line.q) + (circleCenter.x * circleCenter.x) + (circleCenter.y * circleCenter.y) - (circleRadius * circleRadius);
 
 	delta = b * b + ((-4.0f) * a * c);
-
-	if (delta < 0) {
-		points.numPoints = 0;
-	}
-	else if (delta == 0) {
+	
+	if (floatCmp(delta, 0.0f) == 0) {
 		points.numPoints = 1;
+	}
+	else if (delta < 0.0f) {
+		points.numPoints = 0;
+		return points;
 	}
 	else {
 		points.numPoints = 2;
@@ -673,12 +695,12 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 
 	delta = b * b + ((-4.0f) * a * c);
 
-	if (delta < 0) {
+	if (floatCmp(delta, 0.0f) == 0) {
+		points.numPoints = 1;
+	}
+	else if (delta < 0.0f) {
 		points.numPoints = 0;
 		return points;
-	}
-	else if (delta == 0) {
-		points.numPoints = 1;
 	}
 	else {
 		points.numPoints = 2;
@@ -706,8 +728,8 @@ static IntersectionLines intersectionLinesABC(LineABC line1, LineABC line2) {
 	IntersectionLines inters;
 
 	memset(&inters, 0, sizeof(inters));
-
-	if ((line1.Ax * line2.By - line2.Ax * line1.By) == 0.0f) {
+	
+	if (floatCmp((line1.Ax * line2.By - line2.Ax * line1.By), 0.0f) == 0) {
 		line2 = normalizeLineABC2MQ(line2);
 		line1 = normalizeLineABC2MQ(line1);
 		if (memcmp(&line1, &line2, sizeof(inters) == 0))
@@ -732,6 +754,29 @@ static float triangleAngleA(float AC, float CB, float BA) {
 	return angle;
 }
 
+
+static float distanceBwLinesABC(LineABC line1, LineABC line2, Point2D pointOnLine) {
+	IntersectionLines intersLine;
+	float circle_Radius, lines_distance_1, lines_distance_2;
+	IntersectionPoints2D_2 circle_inters_1, circle_inters_2;
+
+	if (areParallelABC(line1, line2)) {
+		return distanceBwParallelLinesABC(line1, line2);
+	}
+
+	intersLine = intersectionLinesABC(line1, line2);
+	circle_Radius = euclidianDistance(intersLine.point, pointOnLine);
+	circle_inters_1 = intersectionLineCircleABC(intersLine.point, circle_Radius, line1);
+	circle_inters_2 = intersectionLineCircleABC(intersLine.point, circle_Radius, line2);
+	
+	lines_distance_1 = euclidianDistance(circle_inters_1.point1, circle_inters_2.point1);
+	lines_distance_2 = euclidianDistance(circle_inters_1.point1, circle_inters_2.point2);
+	
+	if (floatCmp(lines_distance_1, lines_distance_2) <= 0) {
+		return lines_distance_1;
+	}
+	return lines_distance_2;
+}
 
 
 #endif // !__GEOMETRY_H__

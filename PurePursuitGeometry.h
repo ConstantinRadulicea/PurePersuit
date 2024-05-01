@@ -43,7 +43,8 @@ static float carTrajectoryAndWayPointAngle(Point2D carPos, Point2D nextWayPoint)
 	temp = carPos;
 	temp.y += lookAheadDistance;
 	TrajectoryToWayPointAngle = triangleAngleA(lookAheadDistance, euclidianDistance(nextWayPoint, temp), lookAheadDistance);
-	if (carPos.x < nextWayPoint.x) {
+	
+	if (floatCmp(carPos.x, nextWayPoint.x) < 0) {
 		TrajectoryToWayPointAngle = -TrajectoryToWayPointAngle;
 	}
 	return TrajectoryToWayPointAngle;
@@ -67,12 +68,14 @@ static float purePursuitComputeSteeringWheelAngle(Point2D carPos, LineMQ wayPoin
 	Point2D nextWayPoint;
 
 	temp = distance2lineMQ(carPos, wayPoints);
-	if (temp >= lookAheadDistance) {
+	
+	if (floatCmp(temp, lookAheadDistance) >= 0) {
 		lookAheadDistance = temp + (temp * 0.25f);
 	}
 
 	intersectionPoints = intersectionLineCircleMQ(carPos, lookAheadDistance, wayPoints);
-	if (intersectionPoints.point1.y > intersectionPoints.point2.y) {
+	
+	if (floatCmp(intersectionPoints.point1.y, intersectionPoints.point2.y) > 0) {
 		nextWayPoint = intersectionPoints.point1;
 	}
 	else {
@@ -91,12 +94,12 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 
 	temp = distance2lineMQ(carPos, wayPoints);
 	info.distanceToWayPoints = temp;
-	if (temp >= lookAheadDistance) {
+	if (floatCmp(temp, lookAheadDistance) >= 0) {
 		lookAheadDistance = temp + (temp * 0.25f);
 	}
 
 	intersectionPoints = intersectionLineCircleMQ(carPos, lookAheadDistance, wayPoints);
-	if (intersectionPoints.point1.y > intersectionPoints.point2.y) {
+	if (floatCmp(intersectionPoints.point1.y, intersectionPoints.point2.y) > 0) {
 		nextWayPoint = intersectionPoints.point1;
 	}
 	else {
@@ -112,7 +115,10 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 	info.turnRadius = turnRadius(info.TrajectoryToWayPointAngle, carLength, lookAheadDistance);
 	info.manouvreLength = fabsf(((2.0f * M_PI * info.turnRadius) * info.TrajectoryToWayPointAngle) / (2.0f * M_PI));
 	info.turnPoint = carPos;
-	if (info.TrajectoryToWayPointAngle < 0) {
+
+	
+
+	if (floatCmp(info.TrajectoryToWayPointAngle, 0.0f) < 0) {
 		info.turnPoint.x += info.turnRadius;
 	}
 	else {
@@ -130,12 +136,12 @@ static PurePersuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, 
 
 	temp = distance2lineABC(carPos, wayPoints);
 	info.distanceToWayPoints = temp;
-	if (temp >= lookAheadDistance) {
+	if (floatCmp(temp, lookAheadDistance) >= 0) {
 		lookAheadDistance = temp + (temp * 0.1f);
 	}
 
 	intersectionPoints = intersectionLineCircleABC(carPos, lookAheadDistance, wayPoints);
-	if (intersectionPoints.point1.y > intersectionPoints.point2.y) {
+	if (floatCmp(intersectionPoints.point1.y, intersectionPoints.point2.y) > 0) {
 		nextWayPoint = intersectionPoints.point1;
 	}
 	else {
@@ -151,7 +157,8 @@ static PurePersuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, 
 	info.turnRadius = turnRadius(info.TrajectoryToWayPointAngle, carLength, lookAheadDistance);
 	info.manouvreLength = fabsf(((2.0f * M_PI * info.turnRadius) * info.TrajectoryToWayPointAngle) / (2.0f * M_PI));
 	info.turnPoint = carPos;
-	if (info.TrajectoryToWayPointAngle < 0) {
+
+	if (floatCmp(info.TrajectoryToWayPointAngle, 0.0f) < 0) {
 		info.turnPoint.x += info.turnRadius;
 	}
 	else {

@@ -205,6 +205,7 @@ static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteering
 int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
 	LineABC line1, line2, line3, line4, ottusangle, acutangle, midLine;
+	float temp_float_1;
 
 	LineMQ wayPoints = { -3.5f, 625 };
 	// LineABC wayPointsAbc = { 3.5f, 1, -625 };
@@ -258,8 +259,8 @@ int main() {
 	//calculateLookAheadDistance_noPID(5, 30, xAxisABC());
 
 
-	line1 = points2lineABC(Point2D{ 22, 20 }, Point2D{ 36, 34 });
-	line2 = points2lineABC(Point2D{ 41, 7 }, Point2D{ 63, 21 });
+	line1 = points2lineABC(Point2D{ 22, 20 }, Point2D{ 36, 34 });	// -1x + 1y + 2 = 0
+	line2 = points2lineABC(Point2D{ 41, 7 }, Point2D{ 63, 21 });	// -0.636x + 1y + 19.0909 = 0
 
 	bisectorsOfTwoLinesABC(line1, line2, &acutangle, &ottusangle);
 
@@ -277,6 +278,11 @@ int main() {
 	memcpy(data.data(), number, strlen(number) + 1);
 	data.pop_back();
 	parseAndSetGlobalVariables(data, ';');
+
+	line1 = points2lineABC(Point2D{ 0.0f, 0.0f }, Point2D{ 2.236f, 4.472f});
+	line2 = points2lineABC(Point2D{ 0.0f, 0.0f }, Point2D{ 4.472f, 2.236f});
+
+	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 2.236f, 4.472f });
 
 	return 0;
 }
