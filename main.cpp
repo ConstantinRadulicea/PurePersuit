@@ -217,8 +217,8 @@ int main() {
 	float steeringAngle;
 
 	line1 = points2lineABC(Point2D{ 36, 45 }, Point2D{ 53, 48 });
-	line2 = parallelLineAtDistance(line1, 50, 1);
-	bisectorsOfTwoLines(line1, line2, &line3, &line4);
+	line2 = parallelLineAtDistanceABC(line1, 50, 1);
+	bisectorsOfTwoLinesABC(line1, line2, &line3, &line4);
 	angleBetweenLinesABC(yAxisABC(), line3);
 	angleBetweenLinesABC(yAxisABC(), line4);
 
@@ -229,13 +229,13 @@ int main() {
 
 	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());
 	
-	wayPointsAbc = parallelLineAtDistance(LineABC{ 3.0f, 1.0f, -5.0f }, 0.9486f, 0);
+	wayPointsAbc = parallelLineAtDistanceABC(LineABC{ 3.0f, 1.0f, -5.0f }, 0.9486f, 0);
 
 
-	bisectorsOfTwoLines(LineABC{ 4.0f, -3.0f, 10.0f }, LineABC{ -6.0f, 8.0f, -5.0f }, &line1, &line2);
-	bisectorsOfTwoLines(LineABC{ 0.0f, 1.0f, 10.0f }, LineABC{ 0.0f, 1.0f, 5.0f }, &line1, &line2);
-	bisectorsOfTwoLines(LineABC{ 0.0f, 1.0f, 10.0f }, LineABC{ 0.0f, 1.0f, -5.0f }, &line1, &line2);
-	bisectorsOfTwoLines(LineABC{ 2.0f, 1.0f, 10.0f }, LineABC{ 2.0f, 1.0f, -5.0f }, &line1, &line2);
+	bisectorsOfTwoLinesABC(LineABC{ 4.0f, -3.0f, 10.0f }, LineABC{ -6.0f, 8.0f, -5.0f }, &line1, &line2);
+	bisectorsOfTwoLinesABC(LineABC{ 0.0f, 1.0f, 10.0f }, LineABC{ 0.0f, 1.0f, 5.0f }, &line1, &line2);
+	bisectorsOfTwoLinesABC(LineABC{ 0.0f, 1.0f, 10.0f }, LineABC{ 0.0f, 1.0f, -5.0f }, &line1, &line2);
+	bisectorsOfTwoLinesABC(LineABC{ 2.0f, 1.0f, 10.0f }, LineABC{ 2.0f, 1.0f, -5.0f }, &line1, &line2);
 
 
 	line1 = perpendicularToLinePassingThroughPointABC(xAxisABC(), Point2D{ 10, 12 });
@@ -261,7 +261,7 @@ int main() {
 	line1 = points2lineABC(Point2D{ 22, 20 }, Point2D{ 36, 34 });
 	line2 = points2lineABC(Point2D{ 41, 7 }, Point2D{ 63, 21 });
 
-	bisectorsOfTwoLines(line1, line2, &acutangle, &ottusangle);
+	bisectorsOfTwoLinesABC(line1, line2, &acutangle, &ottusangle);
 
 	float angle1, angle2, angle3, angle4;
 	angle1 = angleBetweenLinesABC(line1, acutangle);

@@ -66,12 +66,12 @@ static float purePursuitComputeSteeringWheelAngle(Point2D carPos, LineMQ wayPoin
 	IntersectionPoints2D_2 intersectionPoints;
 	Point2D nextWayPoint;
 
-	temp = distance2line(carPos, wayPoints);
+	temp = distance2lineMQ(carPos, wayPoints);
 	if (temp >= lookAheadDistance) {
 		lookAheadDistance = temp + (temp * 0.25f);
 	}
 
-	intersectionPoints = intersectionLineCircle(carPos, lookAheadDistance, wayPoints);
+	intersectionPoints = intersectionLineCircleMQ(carPos, lookAheadDistance, wayPoints);
 	if (intersectionPoints.point1.y > intersectionPoints.point2.y) {
 		nextWayPoint = intersectionPoints.point1;
 	}
@@ -89,13 +89,13 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 	IntersectionPoints2D_2 intersectionPoints;
 	Point2D nextWayPoint;
 
-	temp = distance2line(carPos, wayPoints);
+	temp = distance2lineMQ(carPos, wayPoints);
 	info.distanceToWayPoints = temp;
 	if (temp >= lookAheadDistance) {
 		lookAheadDistance = temp + (temp * 0.25f);
 	}
 
-	intersectionPoints = intersectionLineCircle(carPos, lookAheadDistance, wayPoints);
+	intersectionPoints = intersectionLineCircleMQ(carPos, lookAheadDistance, wayPoints);
 	if (intersectionPoints.point1.y > intersectionPoints.point2.y) {
 		nextWayPoint = intersectionPoints.point1;
 	}

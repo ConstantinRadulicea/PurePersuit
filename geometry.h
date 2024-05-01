@@ -269,7 +269,7 @@ static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
 	return distance;
 }
 
-static Point2D mirrorImage(LineABC line, Point2D point)
+static Point2D mirrorImageABC(LineABC line, Point2D point)
 {
 	Point2D mirrorPoint_;
 	float temp;
@@ -309,7 +309,7 @@ static int arePerpenticularABC(LineABC line1, LineABC line2) {
 	}
 }
 
-static int areParallel(LineABC line1, LineABC line2) {
+static int areParallelABC(LineABC line1, LineABC line2) {
 	line2 = normalizeLineABC2MQ(line2);
 	line1 = normalizeLineABC2MQ(line1);
 	if (line1.Ax == line2.Ax) {
@@ -324,7 +324,7 @@ static int areParallel(LineABC line1, LineABC line2) {
  *		1: new line on right or bottom side
  *	   0: new line on left or upper side
 */
-static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
+static LineABC parallelLineAtDistanceABC(LineABC line, float distance, int side) {
 	LineABC parallelLine;
 	float abs_q1_minus_q2, newQ;
 
@@ -376,7 +376,7 @@ static LineABC parallelLineAtDistance(LineABC line, float distance, int side) {
 	return parallelLine;
 }
 
-static int isLineParallelToXaxis(LineABC line) {
+static int isLineParallelToXaxisABC(LineABC line) {
 	if (line.Ax == 0.0f && line.By != 0.0f)
 	{
 		return 1;
@@ -386,7 +386,7 @@ static int isLineParallelToXaxis(LineABC line) {
 	}
 }
 
-static int isLineParallelToYaxis(LineABC line) {
+static int isLineParallelToYaxisABC(LineABC line) {
 	if (line.By == 0.0f && line.Ax != 0.0f)
 	{
 		return 1;
@@ -396,7 +396,7 @@ static int isLineParallelToYaxis(LineABC line) {
 	}
 }
 
-static float angleBetweenLines(LineMQ line1, LineMQ line2) {
+static float angleBetweenLinesABC(LineMQ line1, LineMQ line2) {
 	float angle;
 	angle = atanf(fabsf((line1.m - line2.m)) / (1.0f + (line1.m * line2.m)));
 	return angle;
@@ -404,7 +404,7 @@ static float angleBetweenLines(LineMQ line1, LineMQ line2) {
 
 // https://www.math-only-math.com/equations-of-the-bisectors-of-the-angles-between-two-straight-lines.html
 //acutangle is the bisector when the lines are parallel
-static void bisectorsOfTwoLines(LineABC line1, LineABC line2, LineABC* acuteAngle, LineABC* ottuseAngle) {
+static void bisectorsOfTwoLinesABC(LineABC line1, LineABC line2, LineABC* acuteAngle, LineABC* ottuseAngle) {
 	float a1, a2, b1, b2, c1, c2;
 	float aa1, aa2, bb1, bb2, cc1, cc2;
 	float leftDenominator, rightDenominator;
@@ -482,7 +482,7 @@ static void bisectorsOfTwoLines(LineABC line1, LineABC line2, LineABC* acuteAngl
 	}
 }
 
-static LineMQ points2line(Point2D point1, Point2D point2) {
+static LineMQ points2lineMQ(Point2D point1, Point2D point2) {
 	LineMQ line;
 	line.m = (point1.y - point2.y) / (point1.x - point2.x);
 	line.q = (line.m * (-point1.x)) + point1.y;
@@ -511,11 +511,11 @@ static LineABC perpendicularToLinePassingThroughPointABC(LineABC line, Point2D p
 
 	line = normalizeLineABC2MQ(line);
 
-	if (isLineParallelToYaxis(line)) {
+	if (isLineParallelToYaxisABC(line)) {
 		perpendicularLine = xAxisABC();
 		perpendicularLine.C = -point.y;
 	}
-	else if (isLineParallelToXaxis(line)) {
+	else if (isLineParallelToXaxisABC(line)) {
 		perpendicularLine = yAxisABC();
 		perpendicularLine.C = -point.x;
 	}
@@ -534,39 +534,39 @@ static float angleBetweenLinesABC(LineABC line1, LineABC line2) {
 	float angle;
 	LineMQ line1Mq, line2Mq;
 
-	if (isLineParallelToXaxis(line1) && isLineParallelToXaxis(line2)) {
+	if (isLineParallelToXaxisABC(line1) && isLineParallelToXaxisABC(line2)) {
 		return 0.0f;	/* line1 // line2 // Y */
 	}
 
-	if (isLineParallelToYaxis(line1))
+	if (isLineParallelToYaxisABC(line1))
 	{
-		if (isLineParallelToXaxis(line2)) {
+		if (isLineParallelToXaxisABC(line2)) {
 			return M_PI_2;
 		}
-		else if (isLineParallelToYaxis(line2)) {
+		else if (isLineParallelToYaxisABC(line2)) {
 			return 0.0f;	/* line1 // line2 // Y */
 		}
 		line1Mq = lineABC2MQ(line2);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
-		angle = M_PI_2 - angleBetweenLines(line1Mq, line2Mq);
+		angle = M_PI_2 - angleBetweenLinesABC(line1Mq, line2Mq);
 	}
-	else if (isLineParallelToYaxis(line2)) {
-		if (isLineParallelToXaxis(line1)) {
+	else if (isLineParallelToYaxisABC(line2)) {
+		if (isLineParallelToXaxisABC(line1)) {
 			return M_PI_2;
 		}
-		else if (isLineParallelToYaxis(line1)) {
+		else if (isLineParallelToYaxisABC(line1)) {
 			return 0.0f;	/* line1 // line2 // Y */
 		}
 		line1Mq = lineABC2MQ(line1);
 		line2Mq.m = 0;
 		line2Mq.q = 0;
-		angle = M_PI_2 - angleBetweenLines(line1Mq, line2Mq);
+		angle = M_PI_2 - angleBetweenLinesABC(line1Mq, line2Mq);
 	}
 	else {
 		line1Mq = lineABC2MQ(line1);
 		line2Mq = lineABC2MQ(line2);
-		angle = angleBetweenLines(line1Mq, line2Mq);
+		angle = angleBetweenLinesABC(line1Mq, line2Mq);
 	}
 
 	return angle;
@@ -580,7 +580,7 @@ static LineABC points2lineABC(Point2D point1, Point2D point2) {
 		lineAbc.C = -point1.x;
 		return lineAbc;
 	}
-	lineMq = points2line(point1, point2);
+	lineMq = points2lineMQ(point1, point2);
 	lineAbc = lineMQ2ABC(lineMq);
 	return lineAbc;
 }
@@ -591,7 +591,7 @@ static float euclidianDistance(Point2D point1, Point2D point2) {
 	return distance;
 }
 
-static float distance2line(Point2D point, LineMQ line) {
+static float distance2lineMQ(Point2D point, LineMQ line) {
 	float distance;
 	distance = fabsf((line.m * point.x) + (-1.0f * point.y) + line.q) / sqrtf((line.m * line.m) + 1.0f);
 	return distance;
@@ -609,11 +609,11 @@ static float distance2lineABC(Point2D point, LineABC lineAbc) {
 		return euclidianDistance(point, point2Temp);
 	}
 	line = lineABC2MQ(lineAbc);
-	distance = distance2line(point, line);
+	distance = distance2lineMQ(point, line);
 	return distance;
 }
 
-static IntersectionPoints2D_2 intersectionLineCircle(Point2D circleCenter, float circleRadius, LineMQ line) {
+static IntersectionPoints2D_2 intersectionLineCircleMQ(Point2D circleCenter, float circleRadius, LineMQ line) {
 	IntersectionPoints2D_2 points;
 	float a, b, c, delta;
 
@@ -655,7 +655,7 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 
 	lineAbc = normalizeLineABC2MQ(lineAbc);
 
-	if (!isLineParallelToYaxis(lineAbc))
+	if (!isLineParallelToYaxisABC(lineAbc))
 	{
 		line = lineABC2MQ(lineAbc);
 		// ax^2 + bx + c = 0
@@ -685,7 +685,7 @@ static IntersectionPoints2D_2 intersectionLineCircleABC(Point2D circleCenter, fl
 	}
 
 
-	if (!isLineParallelToYaxis(lineAbc))
+	if (!isLineParallelToYaxisABC(lineAbc))
 	{
 		points.point1.x = (-b + sqrtf(delta)) / (2.0f * a);
 		points.point2.x = (-b - sqrtf(delta)) / (2.0f * a);
