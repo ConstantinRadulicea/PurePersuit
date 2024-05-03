@@ -20,7 +20,7 @@
 #ifndef __PUREPURSUITGEOMETRY_H__
 #define __PUREPURSUITGEOMETRY_H__
 
-#include "geometry.h"
+#include "geometry2D.h"
 
 typedef struct PurePersuitInfo {
 	Point2D carPos;

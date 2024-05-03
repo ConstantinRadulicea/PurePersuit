@@ -14,12 +14,16 @@
 * limitations under the License.
 */
 
-#ifndef __GEOMETRY_H__
-#define __GEOMETRY_H__
+#ifndef __GEOMETRY2D_H__
+#define __GEOMETRY2D_H__
 
 #include <math.h>
 #include <float.h>
 #include <string.h>
+
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 
 #define M_PI       3.14159265358979323846   // pi
 #define M_PI_2     1.57079632679489661923   // pi/2
@@ -814,8 +818,99 @@ static int isPointOnSegment(LineSegment segment, Point2D point) {
 }
 
 static float minDistanceBwSegments(LineSegment segment1, LineSegment segment2) {
-	float minDistance;
+	float distanceSeg1A, distanceSeg1B, distanceSeg2A, distanceSeg2B, minDistance;
+	int projectionPresentSeg1A, projectionPresentSeg1B, projectionPresentSeg2A, projectionPresentSeg2B;
+	LineABC lineSegment1, lineSegment2;
+	IntersectionLines tempLinesIntersection;
+	Point2D tempPoint;
 
-	return minDistance;
+	projectionPresentSeg1A = 0;
+	projectionPresentSeg1B = 0;
+	projectionPresentSeg2A = 0;
+	projectionPresentSeg2B = 0;
+
+	lineSegment1 = points2lineABC(segment1.A, segment1.B);
+	lineSegment2 = points2lineABC(segment2.A, segment2.B);
+
+	tempLinesIntersection = intersectionLinesABC(lineSegment1, lineSegment2);
+	if (tempLinesIntersection.info != 0) {
+		return 0.0f;
+	}
+
+	if (isPointOnSegment(segment1, tempLinesIntersection.point) == 1) {
+		return 0.0f;
+	}
+
+	minDistance = 0.0f;
+
+	tempPoint = projectPointOnLineABC(segment1.A, lineSegment2);
+	if (isPointOnSegment(segment2, tempPoint) == 1)
+	{
+		distanceSeg1A = distance2lineABC(tempPoint, lineSegment2);
+		projectionPresentSeg1A = 1;
+	}
+
+	tempPoint = projectPointOnLineABC(segment1.B, lineSegment2);
+	if (isPointOnSegment(segment2, tempPoint) == 1)
+	{
+		distanceSeg1B = distance2lineABC(tempPoint, lineSegment2);
+		projectionPresentSeg1B = 1;
+	}
+
+	tempPoint = projectPointOnLineABC(segment2.A, lineSegment1);
+	if (isPointOnSegment(segment1, tempPoint) == 1)
+	{
+		distanceSeg2A = distance2lineABC(tempPoint, lineSegment1);
+		projectionPresentSeg2A = 1;
+	}
+
+	tempPoint = projectPointOnLineABC(segment2.B, lineSegment1);
+	if (isPointOnSegment(segment2, tempPoint) == 1)
+	{
+		distanceSeg2B = distance2lineABC(tempPoint, lineSegment1);
+		projectionPresentSeg2B = 1;
+	}
+
+	minDistance = 0.0f;
+
+	if (projectionPresentSeg1A != 0) {
+		if (floatCmp(minDistance, 0.0f) == 0) {
+			minDistance = distanceSeg1A;
+		}
+		else {
+			minDistance = MIN(minDistance, distanceSeg1A);
+		}
+	}
+
+	if (projectionPresentSeg1B != 0) {
+		if (floatCmp(minDistance, 0.0f) == 0) {
+			minDistance = distanceSeg1B;
+		}
+		else {
+			minDistance = MIN(minDistance, distanceSeg1B);
+		}
+	}
+
+	if (projectionPresentSeg2A != 0) {
+		if (floatCmp(minDistance, 0.0f) == 0) {
+			minDistance = distanceSeg2A;
+		}
+		else {
+			minDistance = MIN(minDistance, distanceSeg2A);
+		}
+	}
+
+	if (projectionPresentSeg2B != 0) {
+		if (floatCmp(minDistance, 0.0f) == 0) {
+			minDistance = distanceSeg2B;
+		}
+		else {
+			minDistance = MIN(minDistance, distanceSeg2B);
+		}
+	}
+
+	if (floatCmp(minDistance, 0.0f) != 0) {
+		return minDistance;
+	}
 }
-#endif // !__GEOMETRY_H__
+#endif // !__GEOMETRY2D_H__
