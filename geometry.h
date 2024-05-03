@@ -49,6 +49,11 @@ typedef struct Point2D {
 	float y;
 }Point2D;
 
+typedef struct LineSegment{
+	Point2D A;
+	Point2D B;
+}LineSegment;
+
 typedef struct IntersectionPoints2D_2
 {
 	Point2D point1;
@@ -754,7 +759,6 @@ static float triangleAngleA(float AC, float CB, float BA) {
 	return angle;
 }
 
-
 static float distanceBwLinesABC(LineABC line1, LineABC line2, Point2D pointOnLine) {
 	IntersectionLines intersLine;
 	float circle_Radius, lines_distance_1, lines_distance_2;
@@ -778,5 +782,40 @@ static float distanceBwLinesABC(LineABC line1, LineABC line2, Point2D pointOnLin
 	return lines_distance_2;
 }
 
+static Point2D projectPointOnLineABC(Point2D point, LineABC line) {
+	IntersectionLines projectionPoint;
+	LineABC perpendicularLine;
 
+	perpendicularLine = perpendicularToLinePassingThroughPointABC(line, point);
+	projectionPoint = intersectionLinesABC(line, perpendicularLine);
+
+	return projectionPoint.point;
+}
+
+static int isPointOnSegment(LineSegment segment, Point2D point) {
+	float dotproduct, crossproduct, squaredlengthba;
+
+	crossproduct = (point.y - segment.A.y) * (segment.B.x - segment.A.x) - (point.x - segment.A.x) * (segment.B.y - segment.A.y);
+	//compare versus epsilon for floating point values, or != 0 if using integers
+	if (floatCmp(crossproduct, 0.0f) != 0) {
+		return 0;
+	}
+
+	dotproduct = (point.x - segment.A.x) * (segment.B.x - segment.A.x) + (point.y - segment.A.y) * (segment.B.y - segment.A.y);
+	if (floatCmp(dotproduct, 0.0f) < 0) {
+		return 0;
+	}
+
+	squaredlengthba = (segment.B.x - segment.A.x) * (segment.B.x - segment.A.x) + (segment.B.y - segment.A.y) * (segment.B.y - segment.A.y);
+	if (floatCmp(dotproduct, squaredlengthba) > 0) {
+		return 0;
+	}
+	return 1;
+}
+
+static float minDistanceBwSegments(LineSegment segment1, LineSegment segment2) {
+	float minDistance;
+
+	return minDistance;
+}
 #endif // !__GEOMETRY_H__
