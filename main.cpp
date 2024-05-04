@@ -281,8 +281,19 @@ int main() {
 
 	line1 = points2lineABC(Point2D{ 0.0f, 0.0f }, Point2D{ 2.236f, 4.472f});
 	line2 = points2lineABC(Point2D{ 0.0f, 0.0f }, Point2D{ 4.472f, 2.236f});
-
 	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 2.236f, 4.472f });
+
+	line1 = LineABC{ 1.0f, 1.0f, -2.0f };
+	line2 = LineABC{ 1.0f, 1.0f, 0.0f };
+	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 1.0f, 0.0f });
+
+	line1 = LineABC{ 1.0f, 1.0f, -2.0f };
+	line2 = LineABC{ 1.000001f, 1.0f, 0.0f };
+	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 1.0f, 0.0f });
+
+	line1 = LineABC{ 1.0f, 1.0f, -2.0f };
+	line2 = LineABC{ 2.0f, 1.0f, 0.0f };
+	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 1.0f, 0.0f });
 
 
 	int int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.75f, -1.5f });	// true

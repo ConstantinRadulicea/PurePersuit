@@ -287,7 +287,8 @@ static LineMQ perpendicularToLinePassingThroughPointMQ(LineMQ line, Point2D poin
 
 static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
 	float distance;
-	distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
+	distance = fabsf(line2.C - line1.C) / sqrtf((line1.Ax * line1.Ax) + (line1.By * line1.By));
+	//distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
 	return distance;
 }
 
@@ -994,7 +995,7 @@ static LineSegmentsDistancePoints distancePointsBwSegments(LineSegment segment1,
 		}
 	}
 
-	if (minSet == 0)
+	if (/*minSet == 0*/1)
 	{
 		distanceTemp = euclidianDistance(segment1.A, segment2.A);
 		if (minSet == 0)
