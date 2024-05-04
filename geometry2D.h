@@ -58,6 +58,11 @@ typedef struct LineSegment{
 	Point2D B;
 }LineSegment;
 
+typedef struct LineSegmentsDistancePoints {
+	LineSegment min;
+	LineSegment max;
+}LineSegmentsDistancePoints;
+
 typedef struct IntersectionPoints2D_2
 {
 	Point2D point1;
@@ -817,9 +822,10 @@ static int isPointOnSegment(LineSegment segment, Point2D point) {
 	return 1;
 }
 
-static float minDistanceBwSegments(LineSegment segment1, LineSegment segment2) {
-	float distanceSeg1A, distanceSeg1B, distanceSeg2A, distanceSeg2B, minDistance;
-	int projectionPresentSeg1A, projectionPresentSeg1B, projectionPresentSeg2A, projectionPresentSeg2B;
+static LineSegmentsDistancePoints distancePointsBwSegments(LineSegment segment1, LineSegment segment2) {
+	LineSegmentsDistancePoints segmentsDistances;
+	float distanceSeg1A, distanceSeg1B, distanceSeg2A, distanceSeg2B, minDistance, maxDistance, distanceTemp;
+	int projectionPresentSeg1A, projectionPresentSeg1B, projectionPresentSeg2A, projectionPresentSeg2B, minFound, maxFound, minSet, maxSet;
 	LineABC lineSegment1, lineSegment2;
 	IntersectionLines tempLinesIntersection;
 	Point2D tempPoint;
@@ -829,88 +835,225 @@ static float minDistanceBwSegments(LineSegment segment1, LineSegment segment2) {
 	projectionPresentSeg2A = 0;
 	projectionPresentSeg2B = 0;
 
+	minFound = 0;
+	maxFound = 0;
+
+	minSet = 0;
+	maxSet = 0;
+
+	maxDistance = 0.0f;
+	minDistance = 0.0f;
+
 	lineSegment1 = points2lineABC(segment1.A, segment1.B);
 	lineSegment2 = points2lineABC(segment2.A, segment2.B);
 
 	tempLinesIntersection = intersectionLinesABC(lineSegment1, lineSegment2);
-	if (tempLinesIntersection.info != 0) {
-		return 0.0f;
+	if (tempLinesIntersection.info == 0) {
+		if (isPointOnSegment(segment1, tempLinesIntersection.point) == 1) {
+			minFound = 1;
+			minSet = 1;
+			minDistance = 0.0f;
+			segmentsDistances.min.A = tempLinesIntersection.point;
+			segmentsDistances.min.B = tempLinesIntersection.point;
+		}
 	}
-
-	if (isPointOnSegment(segment1, tempLinesIntersection.point) == 1) {
-		return 0.0f;
-	}
-
-	minDistance = 0.0f;
 
 	tempPoint = projectPointOnLineABC(segment1.A, lineSegment2);
 	if (isPointOnSegment(segment2, tempPoint) == 1)
 	{
-		distanceSeg1A = distance2lineABC(tempPoint, lineSegment2);
+		distanceSeg1A = euclidianDistance(tempPoint, segment1.A);
 		projectionPresentSeg1A = 1;
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg1A;
+			minSet = 1;
+		}
+		else if (floatCmp(distanceSeg1A, minDistance) < 0) {
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg1A;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg1A;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceSeg1A, maxDistance) > 0) {
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg1A;
+			maxSet = 1;
+		}
 	}
 
 	tempPoint = projectPointOnLineABC(segment1.B, lineSegment2);
 	if (isPointOnSegment(segment2, tempPoint) == 1)
 	{
-		distanceSeg1B = distance2lineABC(tempPoint, lineSegment2);
+		distanceSeg1B = euclidianDistance(tempPoint, segment1.B);
 		projectionPresentSeg1B = 1;
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment1.B;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg1B;
+			minSet = 1;
+		}
+		else if (floatCmp(distanceSeg1B, minDistance) < 0) {
+			segmentsDistances.min.A = segment1.B;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg1B;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment1.B;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg1B;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceSeg1B, maxDistance) > 0) {
+			segmentsDistances.max.A = segment1.B;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg1B;
+			maxSet = 1;
+		}
 	}
 
 	tempPoint = projectPointOnLineABC(segment2.A, lineSegment1);
 	if (isPointOnSegment(segment1, tempPoint) == 1)
 	{
-		distanceSeg2A = distance2lineABC(tempPoint, lineSegment1);
+		distanceSeg2A = euclidianDistance(tempPoint, segment2.A);
 		projectionPresentSeg2A = 1;
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment2.A;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg2A;
+			minSet = 1;
+		}
+		else if (floatCmp(distanceSeg2A, minDistance) < 0) {
+			segmentsDistances.min.A = segment2.A;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg2A;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment2.A;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg2A;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceSeg2A, maxDistance) > 0) {
+			segmentsDistances.max.A = segment2.A;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg2A;
+			maxSet = 1;
+		}
 	}
 
 	tempPoint = projectPointOnLineABC(segment2.B, lineSegment1);
 	if (isPointOnSegment(segment2, tempPoint) == 1)
 	{
-		distanceSeg2B = distance2lineABC(tempPoint, lineSegment1);
+		distanceSeg2B = euclidianDistance(tempPoint, segment2.B);
 		projectionPresentSeg2B = 1;
-	}
-
-	minDistance = 0.0f;
-
-	if (projectionPresentSeg1A != 0) {
-		if (floatCmp(minDistance, 0.0f) == 0) {
-			minDistance = distanceSeg1A;
-		}
-		else {
-			minDistance = MIN(minDistance, distanceSeg1A);
-		}
-	}
-
-	if (projectionPresentSeg1B != 0) {
-		if (floatCmp(minDistance, 0.0f) == 0) {
-			minDistance = distanceSeg1B;
-		}
-		else {
-			minDistance = MIN(minDistance, distanceSeg1B);
-		}
-	}
-
-	if (projectionPresentSeg2A != 0) {
-		if (floatCmp(minDistance, 0.0f) == 0) {
-			minDistance = distanceSeg2A;
-		}
-		else {
-			minDistance = MIN(minDistance, distanceSeg2A);
-		}
-	}
-
-	if (projectionPresentSeg2B != 0) {
-		if (floatCmp(minDistance, 0.0f) == 0) {
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment2.B;
+			segmentsDistances.min.B = tempPoint;
 			minDistance = distanceSeg2B;
+			minSet = 1;
 		}
-		else {
-			minDistance = MIN(minDistance, distanceSeg2B);
+		else if (floatCmp(distanceSeg2B, minDistance) < 0) {
+			segmentsDistances.min.A = segment2.B;
+			segmentsDistances.min.B = tempPoint;
+			minDistance = distanceSeg2B;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment2.B;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg2B;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceSeg2B, maxDistance) > 0) {
+			segmentsDistances.max.A = segment2.B;
+			segmentsDistances.max.B = tempPoint;
+			maxDistance = distanceSeg2B;
+			maxSet = 1;
 		}
 	}
 
-	if (floatCmp(minDistance, 0.0f) != 0) {
-		return minDistance;
+	if (minSet == 0)
+	{
+		distanceTemp = euclidianDistance(segment1.A, segment2.A);
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = segment2.A;
+			minDistance = distanceTemp;
+			minSet = 1;
+		}
+		else if (floatCmp(distanceTemp, minDistance) < 0) {
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = segment2.A;
+			minDistance = distanceTemp;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = segment2.A;
+			maxDistance = distanceTemp;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceTemp, maxDistance) > 0) {
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = segment2.A;
+			maxDistance = distanceTemp;
+			maxSet = 1;
+		}
+
+		distanceTemp = euclidianDistance(segment1.A, segment2.B);
+		if (minSet == 0)
+		{
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = segment2.B;
+			minDistance = distanceTemp;
+			minSet = 1;
+		}
+		else if (floatCmp(distanceTemp, minDistance) < 0) {
+			segmentsDistances.min.A = segment1.A;
+			segmentsDistances.min.B = segment2.B;
+			minDistance = distanceTemp;
+			minSet = 1;
+		}
+
+		if (maxSet == 0)
+		{
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = segment2.B;
+			maxDistance = distanceTemp;
+			maxSet = 1;
+		}
+		else if (floatCmp(distanceTemp, maxDistance) > 0) {
+			segmentsDistances.max.A = segment1.A;
+			segmentsDistances.max.B = segment2.B;
+			maxDistance = distanceTemp;
+			maxSet = 1;
+		}
 	}
+	return segmentsDistances;
 }
 #endif // !__GEOMETRY2D_H__

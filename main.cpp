@@ -288,6 +288,12 @@ int main() {
 	int int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.75f, -1.5f });	// true
 	int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.76f, -1.5f });		// false
 
+	LineSegmentsDistancePoints lineSegmentsDistances;
+	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ 0.0f, 1.0f}, Point2D{ 5.0f, 1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=0.00000000 y=1.00000000 } B={x=0.00000000 y=-5.00000000 } }		max = {A={x=0.00000000 y=1.00000000 } B={x=0.00000000 y=-5.00000000 } }
+	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ 1.0f, 1.0f}, Point2D{ 5.0f, 1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=1.00000000 y=1.00000000 } B={x=1.00000000 y=-5.00000000 } }		max = {A={x=1.00000000 y=1.00000000 } B={x=1.00000000 y=-5.00000000 } }
+	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ -1.0f, 2.0f}, Point2D{ 2.0f, -1.0f} }, LineSegment{ Point2D{ -2.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });	// min = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }		max = {A={x=-1.00000000 y=2.00000000 } B={x=-1.00000000 y=-5.00000000 } }
+	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ -1.0f, 2.0f}, Point2D{ 2.0f, -1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }		max = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }
+
 	return 0;
 }
 
