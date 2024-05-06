@@ -296,6 +296,15 @@ int main() {
 	temp_float_1 = distanceBwLinesABC(line1, line2, Point2D{ 1.0f, 0.0f });
 
 
+	line1 = LineABC{ 99.0f, 0.0f, 0.0f };
+	line2 = LineABC{ 3.0f, 0.0f, 3.0f };
+	temp_float_1 = distanceBwParallelLinesABC(line1, line2);
+
+	line1 = LineABC{ 3.0f, 20.0f, 0.0f };
+	line2 = LineABC{ 3.0f, 20.0f, 3.0f };
+	temp_float_1 = distanceBwParallelLinesABC(line1, line2);
+
+
 	int int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.75f, -1.5f });	// true
 	int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.76f, -1.5f });		// false
 

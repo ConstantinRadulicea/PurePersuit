@@ -285,12 +285,6 @@ static LineMQ perpendicularToLinePassingThroughPointMQ(LineMQ line, Point2D poin
 	return perpendicularLine;
 }
 
-static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
-	float distance;
-	distance = fabsf(line2.C - line1.C) / sqrtf((line1.Ax * line1.Ax) + (line1.By * line1.By));
-	//distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
-	return distance;
-}
 
 static Point2D mirrorImageABC(LineABC line, Point2D point)
 {
@@ -321,6 +315,16 @@ static LineABC normalizeLineABC2MQ(LineABC line) {
 	return line;
 }
 
+static float distanceBwParallelLinesABC(LineABC line1, LineABC line2) {
+	float distance;
+	line2 = normalizeLineABC2MQ(line2);
+	line1 = normalizeLineABC2MQ(line1);
+	distance = fabsf(line2.C - line1.C) / sqrtf((line1.Ax * line1.Ax) + (line1.By * line1.By));
+	//distance = fabsf((-line2.C) - (-line1.C)) / sqrtf(1.0f + ((-line1.Ax) * (-line1.Ax)));
+	return distance;
+}
+
+
 static int arePerpenticularABC(LineABC line1, LineABC line2) {
 	line2 = normalizeLineABC2MQ(line2);
 	line1 = normalizeLineABC2MQ(line1);
@@ -337,7 +341,7 @@ static int areParallelABC(LineABC line1, LineABC line2) {
 	line2 = normalizeLineABC2MQ(line2);
 	line1 = normalizeLineABC2MQ(line1);
 	
-	if (floatCmp(line1.Ax, line2.Ax) == 0.0f) {
+	if (floatCmp(line1.Ax, line2.Ax) == 0.0f && floatCmp(line1.By, line2.By) == 0.0f) {
 		return 1;
 	}
 	else {
