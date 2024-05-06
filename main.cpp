@@ -213,7 +213,7 @@ int main() {
 	float carLength = 20.0f;
 	float lookAheadDistance = 100.0f;
 	Point2D carPos = { 200.0f, -carLength};
-	PurePersuitInfo info, info2;
+	PurePursuitInfo info, info2;
 
 	float steeringAngle;
 
@@ -225,7 +225,7 @@ int main() {
 
 
 
-	info = purePursuitCompute(carPos, wayPoints, carLength, lookAheadDistance);
+	info = purePursuitComputeMQ(carPos, wayPoints, carLength, lookAheadDistance);
 	info2 = purePursuitComputeABC(carPos, line3, carLength, lookAheadDistance);
 
 	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());

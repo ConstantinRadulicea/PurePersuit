@@ -22,18 +22,18 @@
 
 #include "geometry2D.h"
 
-typedef struct PurePersuitInfo {
+typedef struct PurePursuitInfo {
 	Point2D carPos;
 	Point2D nextWayPoint;
 	Point2D turnPoint;
-	float distanceToWayPoints;
+	float distanceToWayPoint;
 	float lookAheadDistance;
 	float TrajectoryToWayPointAngle;
 	float steeringAngle;
 	float carLength;
 	float turnRadius;
 	float manouvreLength;
-}PurePersuitInfo;
+}PurePursuitInfo;
 
 static float carTrajectoryAndWayPointAngle(Point2D carPos, Point2D nextWayPoint) {
 	float lookAheadDistance, TrajectoryToWayPointAngle;
@@ -86,14 +86,14 @@ static float purePursuitComputeSteeringWheelAngle(Point2D carPos, LineMQ wayPoin
 	return steeringWheelAngle(temp, carLength, lookAheadDistance);
 }
 
-static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, float carLength, float lookAheadDistance) {
+static PurePursuitInfo purePursuitComputeMQ(Point2D carPos, LineMQ wayPoints, float carLength, float lookAheadDistance) {
 	float temp;
-	PurePersuitInfo info;
+	PurePursuitInfo info;
 	IntersectionPoints2D_2 intersectionPoints;
 	Point2D nextWayPoint;
 
 	temp = distance2lineMQ(carPos, wayPoints);
-	info.distanceToWayPoints = temp;
+	info.distanceToWayPoint = temp;
 	if (floatCmp(temp, lookAheadDistance) >= 0) {
 		lookAheadDistance = temp + (temp * 0.25f);
 	}
@@ -128,14 +128,14 @@ static PurePersuitInfo purePursuitCompute(Point2D carPos, LineMQ wayPoints, floa
 	return info;
 }
 
-static PurePersuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, float carLength, float lookAheadDistance) {
+static PurePursuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, float carLength, float lookAheadDistance) {
 	float temp;
-	PurePersuitInfo info;
+	PurePursuitInfo info;
 	IntersectionPoints2D_2 intersectionPoints;
 	Point2D nextWayPoint;
 
 	temp = distance2lineABC(carPos, wayPoints);
-	info.distanceToWayPoints = temp;
+	info.distanceToWayPoint = temp;
 	if (floatCmp(temp, lookAheadDistance) >= 0) {
 		lookAheadDistance = temp + (temp * 0.1f);
 	}
