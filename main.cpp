@@ -307,12 +307,22 @@ int main() {
 
 	int int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.75f, -1.5f });	// true
 	int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -0.76f, -1.5f });		// false
+	int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ 0.0f, -3.0f });		// true
+	int1 = isPointOnSegment(LineSegment{ Point2D{ -1.5f, 0.0f}, Point2D{ 0.0f, -3.0f} }, Point2D{ -1.5f, 0.0f });		// true
 
 	LineSegmentsDistancePoints lineSegmentsDistances;
 	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ 0.0f, 1.0f}, Point2D{ 5.0f, 1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=0.00000000 y=1.00000000 } B={x=0.00000000 y=-5.00000000 } }		max = {A={x=0.00000000 y=1.00000000 } B={x=0.00000000 y=-5.00000000 } }
 	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ 1.0f, 1.0f}, Point2D{ 5.0f, 1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=1.00000000 y=1.00000000 } B={x=1.00000000 y=-5.00000000 } }		max = {A={x=1.00000000 y=1.00000000 } B={x=1.00000000 y=-5.00000000 } }
 	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ -1.0f, 2.0f}, Point2D{ 2.0f, -1.0f} }, LineSegment{ Point2D{ -2.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });	// min = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }		max = {A={x=-1.00000000 y=2.00000000 } B={x=-1.00000000 y=-5.00000000 } }
 	lineSegmentsDistances = distancePointsBwSegments(LineSegment{ Point2D{ -1.0f, 2.0f}, Point2D{ 2.0f, -1.0f} }, LineSegment{ Point2D{ 0.0f, -5.0f}, Point2D{ 5.0f, -5.0f} });		// min = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }		max = {A={x=2.00000000 y=-1.00000000 } B={x=2.00000000 y=-5.00000000 } }
+
+
+	LineSegment segment;
+	LineABC line;
+	line = yAxisABC();
+	segment = LineSegment{ Point2D{ 1.0f, 1.0f}, Point2D{ 10.0f, 1.0f} };
+	temp_float_1 = minDistanceLineSegmentToLine(segment, line);
+
 
 	return 0;
 }
