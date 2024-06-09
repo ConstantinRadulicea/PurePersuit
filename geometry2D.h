@@ -825,6 +825,10 @@ static int isPointOnSegment(LineSegment segment, Point2D point) {
 	return 0;
 }
 
+static float lineSegmentLength(LineSegment segment) {
+	return euclidianDistance(segment.A, segment.B);
+}
+
 static LineSegmentsDistancePoints distancePointsBwSegments(LineSegment segment1, LineSegment segment2) {
 	LineSegmentsDistancePoints segmentsDistances;
 	float distanceSeg1A, distanceSeg1B, distanceSeg2A, distanceSeg2B, minDistance, maxDistance, distanceTemp;
@@ -1089,6 +1093,5 @@ static float maxDistanceLineSegmentToLine(LineSegment vectorSegment, LineABC lin
 
 	return MAX(point1Distance, point2Distance);
 }
-
 
 #endif // !__GEOMETRY2D_H__
