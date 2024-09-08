@@ -202,7 +202,7 @@ static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteering
 }
 
 
-int main() {
+int main2() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
 	LineABC line1, line2, line3, line4, ottusangle, acutangle, midLine;
 	float temp_float_1;
