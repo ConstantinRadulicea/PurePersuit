@@ -717,6 +717,10 @@ float triangleAngleA(float AC, float CB, float BA) {
 	return angle;
 }
 
+float angleBw3Points2D(Point2D origin, Point2D point_b, Point2D point_c) {
+	return triangleAngleA(euclidianDistance(origin, point_c), euclidianDistance(point_c, point_b), euclidianDistance(point_b, origin));
+}
+
 float distanceBwLinesABC(LineABC line1, LineABC line2, Point2D pointOnLine) {
 	IntersectionLines intersLine;
 	float circle_Radius, lines_distance_1, lines_distance_2;
@@ -1039,10 +1043,10 @@ Point2D circleAngleToPoint2D(Point2D circleCenter, float circleRadius, float ang
 	return result_point;
 }
 
-float circlePoint2DToAngle(Point2D circleCenter, float circleRadius, Point2D point) {
+float circlePoint2DToAngle(Point2D circleCenter, Point2D point) {
 	float result_angle;
-	circleRadius = fabs(circleRadius);
 	result_angle = atan2f(point.y - circleCenter.y, point.x - circleCenter.x);
+	result_angle = NormalizePiToNegPi(result_angle);
 
 	return result_angle;
 }
@@ -1091,4 +1095,13 @@ IntersectionPoints2D_2 intersectionBwCircles(Point2D circleCenter_1, float circl
 	intersections_result = intersectionLineCircleABC(circleCenter_1, circleRadius_1, line_passing_through_intersections);
 
 	return intersections_result;
+}
+
+
+float NormalizePiToNegPi(float angle)
+{
+	float newAngle = angle;
+	while (newAngle <= -M_PI) newAngle += (2.0f*M_PI);
+	while (newAngle > M_PI) newAngle -= (2.0f * M_PI);
+	return newAngle;
 }

@@ -38,6 +38,7 @@
 #define MicroToUnit(val) ((val)/1000000)
 #define UnitToMicro(val) ((val)*1000000)
 
+
 #define INCONSISTENT_ECUATION_SYSTEM 1
 #define CONSISTENT_ECUATION_SYSTEM 2
 
@@ -85,6 +86,8 @@ typedef struct IntersectionLines {
 	Point2D point;
 	int info; // 0: one intersection, 1: lines are parallel, 2: the lines are equal
 }IntersectionLines;
+
+float NormalizePiToNegPi(float angle);
 
 LineABC xAxisABC();
 
@@ -161,6 +164,8 @@ IntersectionLines intersectionLinesABC(LineABC line1, LineABC line2);
 
 Point2D circleAngleToPoint2D(Point2D circleCenter, float circleRadius, float angleRad);
 
+
+
 float triangleAngleA(float AC, float CB, float BA);
 
 float distanceBwLinesABC(LineABC line1, LineABC line2, Point2D pointOnLine);
@@ -179,6 +184,7 @@ float maxDistanceLineSegmentToLine(LineSegment vectorSegment, LineABC line);
 
 IntersectionPoints2D_2 intersectionBwCircles(Point2D circleCenter_1, float circleRadius_1, Point2D circleCenter_2, float circleRadius_2);
 
-float circlePoint2DToAngle(Point2D circleCenter, float circleRadius, Point2D point);
+float circlePoint2DToAngle(Point2D circleCenter, Point2D point);
 
+float angleBw3Points2D(Point2D origin, Point2D point_b, Point2D point_c);
 #endif // !__GEOMETRY2D_H__
