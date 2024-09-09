@@ -1105,3 +1105,12 @@ float NormalizePiToNegPi(float angle)
 	while (newAngle > M_PI) newAngle -= (2.0f * M_PI);
 	return newAngle;
 }
+
+
+float NormalizeZeroToPi(float angle) {
+	angle = fmodf(angle, (M_PI * 2.0f));  // Get the remainder of the division
+	if (angle < 0) {
+		angle += (M_PI * 2.0f);  // Adjust for negative angles
+	}
+	return angle;
+}

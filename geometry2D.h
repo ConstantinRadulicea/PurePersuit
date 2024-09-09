@@ -187,4 +187,6 @@ IntersectionPoints2D_2 intersectionBwCircles(Point2D circleCenter_1, float circl
 float circlePoint2DToAngle(Point2D circleCenter, Point2D point);
 
 float angleBw3Points2D(Point2D origin, Point2D point_b, Point2D point_c);
+
+float NormalizeZeroToPi(float angle);
 #endif // !__GEOMETRY2D_H__
