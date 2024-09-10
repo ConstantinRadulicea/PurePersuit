@@ -56,9 +56,15 @@ static float steeringWheelAngle(float TrajectoryToWayPointAngle, float carLength
 	return angle;
 }
 
-static float turnRadius(float TrajectoryToWayPointAngle, float carLength, float nextWayPointDistance) {
+static float turnRadiusByWaypoint(float TrajectoryToWayPointAngle, float carLength, float nextWayPointDistance) {
 	float angle;
 	angle = (nextWayPointDistance / (2.0f * sinf(TrajectoryToWayPointAngle)));
+	return angle;
+}
+
+static float turnRadius(float wheelBase, float turnAngle) {
+	float angle;
+	angle = (wheelBase / tanf(turnAngle));
 	return angle;
 }
 
@@ -70,7 +76,7 @@ static float purePursuitComputeSteeringWheelAngle(Point2D carPos, LineMQ wayPoin
 	temp = distance2lineMQ(carPos, wayPoints);
 	
 	if (floatCmp(temp, lookAheadDistance) >= 0) {
-		lookAheadDistance = temp + (temp * 0.25f);
+		lookAheadDistance = temp + (temp * 0.1f);
 	}
 
 	intersectionPoints = intersectionLineCircleMQ(carPos, lookAheadDistance, wayPoints);
@@ -112,7 +118,7 @@ static PurePursuitInfo purePursuitComputeMQ(Point2D carPos, LineMQ wayPoints, fl
 	info.nextWayPoint = nextWayPoint;
 	info.lookAheadDistance = lookAheadDistance;
 	info.carLength = carLength;
-	info.turnRadius = turnRadius(info.TrajectoryToWayPointAngle, carLength, lookAheadDistance);
+	info.turnRadius = turnRadius(carLength, info.steeringAngle);
 	info.manouvreLength = fabsf(((2.0f * M_PI * info.turnRadius) * info.TrajectoryToWayPointAngle) / (2.0f * M_PI));
 	info.turnPoint = carPos;
 
@@ -154,7 +160,7 @@ static PurePursuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, 
 	info.nextWayPoint = nextWayPoint;
 	info.lookAheadDistance = lookAheadDistance;
 	info.carLength = carLength;
-	info.turnRadius = turnRadius(info.TrajectoryToWayPointAngle, carLength, lookAheadDistance);
+	info.turnRadius = turnRadius(carLength, info.steeringAngle);
 	info.manouvreLength = fabsf(((2.0f * M_PI * info.turnRadius) * info.TrajectoryToWayPointAngle) / (2.0f * M_PI));
 	info.turnPoint = carPos;
 

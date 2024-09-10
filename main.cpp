@@ -30,11 +30,15 @@
 #define IMAGE_MAX_Y 51
 #define LANE_WIDTH_PIXELS 50
 
-#define STEERING_SERVO_ANGLE_MIDDLE     85    // 90 middle
-#define STEERING_SERVO_ANGLE_MAX_RIGHT  0    // 38 max right
-#define STEERING_SERVO_ANGLE_MAX_LEFT   180   // 135 max left
-#define STEERING_SERVO_MAX_ANGLE MAX(fabsf(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_RIGHT), fabsf(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_LEFT))
+#define STEERING_SERVO_ANGLE_MIDDLE     90    // 90 middle // 120
+#define STEERING_SERVO_ANGLE_MAX_RIGHT  35    // 0 max right // 90 - 58 = 32
+#define STEERING_SERVO_ANGLE_MAX_LEFT   145   // 180 max left // 90 + 58
 
+
+#define STEERING_SERVO_MAX_ANGLE MAX(abs(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_RIGHT), abs(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_LEFT))
+#define STEERING_SERVO_MIN_ANGLE MIN(abs(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_RIGHT), abs(STEERING_SERVO_ANGLE_MIDDLE - STEERING_SERVO_ANGLE_MAX_LEFT))
+
+#define VALID_STEERING_ANGLE(angle) (MIN(MAX(angle, MIN(STEERING_SERVO_ANGLE_MAX_RIGHT, STEERING_SERVO_ANGLE_MAX_LEFT)), MAX(STEERING_SERVO_ANGLE_MAX_RIGHT, STEERING_SERVO_ANGLE_MAX_LEFT)))
 
 static float lane_width_vector_unit_real;
 static float lookahead_min_distance_cm;
@@ -202,7 +206,7 @@ static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteering
 }
 
 
-int main2() {
+int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
 	LineABC line1, line2, line3, line4, ottusangle, acutangle, midLine;
 	float temp_float_1;
@@ -217,6 +221,8 @@ int main2() {
 
 	float steeringAngle;
 
+	steeringAngle = VALID_STEERING_ANGLE(300);
+
 	line1 = points2lineABC(Point2D{ 36, 45 }, Point2D{ 53, 48 });
 	line2 = parallelLineAtDistanceABC(line1, 50, 1);
 	bisectorsOfTwoLinesABC(line1, line2, &line3, &line4);
@@ -226,7 +232,7 @@ int main2() {
 
 
 	info = purePursuitComputeMQ(carPos, wayPoints, carLength, lookAheadDistance);
-	info2 = purePursuitComputeABC(carPos, line3, carLength, lookAheadDistance);
+	info2 = purePursuitComputeABC(carPos, line3, carLength, lookAheadDistance); // steering angle -0.239, turnRadius: -82.08
 
 	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());
 	

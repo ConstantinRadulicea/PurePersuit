@@ -113,7 +113,7 @@ float RawAngleToSteeringAngle_rad(float raw_angle) {
 	return steering_angle;
 }
 
-int main() {
+int main3() {
 	float result_1, result_2, result_3;
 	float servo, wheels;
 	result_1 = degrees(SteeringAngleToRawAngle_rad(radians(40))); // -0.936093390
