@@ -16,6 +16,7 @@
 
 
 #include "PurePursuitGeometry.h"
+#include "CalculateCarSpeed.h"
 #include <cstdint>
 #include <vector>
 #include <string.h>
@@ -189,7 +190,7 @@ void parseAndSetGlobalVariables(std::vector<char>& rawData, char variableTermina
 //	return newLookAheadDistance;
 //}
 
-static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteeringWheelAngle, float steeringWheelAngle) {
+static float calculateCarSpeed_old(float minSpeed, float maxSpeed, float maxSteeringWheelAngle, float steeringWheelAngle) {
 	float newCarSpeed, speedSpan;
 
 	speedSpan = maxSpeed - minSpeed;
@@ -209,7 +210,7 @@ static float calculateCarSpeed(float minSpeed, float maxSpeed, float maxSteering
 int main() {
 	points2lineABC(Point2D{ 48, 36 }, Point2D{ 12, 10 });
 	LineABC line1, line2, line3, line4, ottusangle, acutangle, midLine;
-	float temp_float_1;
+	float temp_float_1, temp_float_2;
 
 	LineMQ wayPoints = { -3.5f, 625 };
 	// LineABC wayPointsAbc = { 3.5f, 1, -625 };
@@ -221,7 +222,12 @@ int main() {
 
 	float steeringAngle;
 
+	temp_float_1 = CalculateCarSpeed(0.5, 3, carLength / 100, 0.4, G_CONSTANT, 45);
+
 	steeringAngle = VALID_STEERING_ANGLE(300);
+
+	temp_float_1 = turnRadius(carLength, radians(45.0f));
+	temp_float_2 = sqrtf(9.81f * (temp_float_1 / 100) * 0.4f);
 
 	line1 = points2lineABC(Point2D{ 36, 45 }, Point2D{ 53, 48 });
 	line2 = parallelLineAtDistanceABC(line1, 50, 1);
@@ -253,11 +259,11 @@ int main() {
 	Vector vec, vecResult;
 
 
-	calculateCarSpeed(100, 110, 90, 0);
-	calculateCarSpeed(100, 110, 90, 20);
-	calculateCarSpeed(100, 110, 90, 45);
-	calculateCarSpeed(100, 110, 90, 60);
-	calculateCarSpeed(100, 110, 90, 90);
+	calculateCarSpeed_old(100, 110, 90, 0);
+	calculateCarSpeed_old(100, 110, 90, 20);
+	calculateCarSpeed_old(100, 110, 90, 45);
+	calculateCarSpeed_old(100, 110, 90, 60);
+	calculateCarSpeed_old(100, 110, 90, 90);
 
 
 	//calculateLookAheadDistance_noPID(5, 30, LineABC{ 2, 1, -7 });

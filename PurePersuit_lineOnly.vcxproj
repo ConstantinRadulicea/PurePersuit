@@ -132,6 +132,7 @@
     <ClCompile Include="main2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalculateCarSpeed.h" />
     <ClInclude Include="geometry2D.h" />
     <ClInclude Include="PurePursuitGeometry.h" />
   </ItemGroup>

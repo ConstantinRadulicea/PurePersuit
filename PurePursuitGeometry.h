@@ -65,6 +65,7 @@ static float turnRadiusByWaypoint(float TrajectoryToWayPointAngle, float carLeng
 static float turnRadius(float wheelBase, float turnAngle) {
 	float angle;
 	angle = (wheelBase / tanf(turnAngle));
+	angle = fabsf(angle);
 	return angle;
 }
 
@@ -172,6 +173,13 @@ static PurePursuitInfo purePursuitComputeABC(Point2D carPos, LineABC wayPoints, 
 	}
 
 	return info;
+}
+
+
+static float carTurnMaxSpeed(float _turn_radius, float _friction_coefficient, float _downward_acceleration) {
+	float _max_speed;
+	_max_speed = sqrtf(_friction_coefficient * _turn_radius * _downward_acceleration);
+	return _max_speed;
 }
 
 

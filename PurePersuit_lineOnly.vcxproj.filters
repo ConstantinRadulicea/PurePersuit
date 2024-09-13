@@ -32,5 +32,8 @@
     <ClInclude Include="geometry2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CalculateCarSpeed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

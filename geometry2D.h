@@ -29,14 +29,15 @@
 #define M_PI_2     1.57079632679489661923   // pi/2
 #define DEG_TO_RAD 0.01745329251994329576
 #define RAD_TO_DEG 57.2957795130823208767
+#define G_CONSTANT 9.80665
 
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define HzToSec(hz) (1.0/(hz))
-#define MilliToMicro(val) ((val)*1000)
-#define MicroToMilli(val) ((val)/1000)
-#define MicroToUnit(val) ((val)/1000000)
-#define UnitToMicro(val) ((val)*1000000)
+#define MilliToMicro(val) ((val)*1000.0)
+#define MicroToMilli(val) ((val)/1000.0)
+#define MicroToUnit(val) ((val)/1000000.0)
+#define UnitToMicro(val) ((val)*1000000.0)
 
 
 #define INCONSISTENT_ECUATION_SYSTEM 1
