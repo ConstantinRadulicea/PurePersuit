@@ -215,18 +215,18 @@ int main() {
 	LineMQ wayPoints = { -3.5f, 625 };
 	// LineABC wayPointsAbc = { 3.5f, 1, -625 };
 	LineABC wayPointsAbc = { 2, 0, 0 };
-	float carLength = 20.0f;
+	float wheelBase = 20.0f;
 	float lookAheadDistance = 100.0f;
-	Point2D carPos = { 200.0f, -carLength};
+	Point2D carPos = { 200.0f, -wheelBase};
 	PurePursuitInfo info, info2;
 
 	float steeringAngle;
 
-	temp_float_1 = CalculateCarSpeed(0.5, 3, carLength / 100, 0.4, G_CONSTANT, 45);
+	temp_float_1 = CalculateCarSpeed(0.5, 3, wheelBase / 100, 0.4, G_CONSTANT, radians(45));
 
 	steeringAngle = VALID_STEERING_ANGLE(300);
 
-	temp_float_1 = turnRadius(carLength, radians(45.0f));
+	temp_float_1 = turnRadius(wheelBase, radians(45.0f));
 	temp_float_2 = sqrtf(9.81f * (temp_float_1 / 100) * 0.4f);
 
 	line1 = points2lineABC(Point2D{ 36, 45 }, Point2D{ 53, 48 });
@@ -237,10 +237,10 @@ int main() {
 
 
 
-	info = purePursuitComputeMQ(carPos, wayPoints, carLength, lookAheadDistance);
-	info2 = purePursuitComputeABC(carPos, line3, carLength, lookAheadDistance); // steering angle -0.239, turnRadius: -82.08
+	info = purePursuitComputeMQ(carPos, wayPoints, wheelBase, lookAheadDistance);
+	info2 = purePursuitComputeABC(carPos, line3, wheelBase, lookAheadDistance); // steering angle -0.239, turnRadius: -82.08
 
-	carLength = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());
+	wheelBase = angleBetweenLinesABC(points2lineABC(Point2D{ -1, -1 }, Point2D{-2, -2}), yAxisABC());
 	
 	wayPointsAbc = parallelLineAtDistanceABC(LineABC{ 3.0f, 1.0f, -5.0f }, 0.9486f, 0);
 
