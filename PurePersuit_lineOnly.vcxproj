@@ -130,10 +130,12 @@
     <ClCompile Include="geometry2D.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main2.cpp" />
+    <ClCompile Include="main_homography.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalculateCarSpeed.h" />
     <ClInclude Include="geometry2D.h" />
+    <ClInclude Include="homography.h" />
     <ClInclude Include="PurePursuitGeometry.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

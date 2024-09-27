@@ -24,6 +24,9 @@
     <ClCompile Include="main2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main_homography.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PurePursuitGeometry.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalculateCarSpeed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="homography.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

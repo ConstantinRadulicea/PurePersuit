@@ -104,6 +104,7 @@ int floatCmp(float num1, float num2);
 
 int gaussianElimination3(float A[3][3 + 1], float x[3], int n);
 int gaussianElimination2(float A[2][2 + 1], float x[2], int n);
+int gaussianElimination8(float A[8][8 + 1], float x[8], int n);
 
 ParabolaABC points2parabola_3(Point2D point1, Point2D point2, Point2D point3);
 
