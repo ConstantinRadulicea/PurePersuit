@@ -1,7 +1,7 @@
 #include "homography.h"
 
 
-int main() {
+int main22() {
 	float H[3][3] = { 0.0f };
 	Point2D tem_point;
 	Point2D imgPoints[4] = {

@@ -21,9 +21,6 @@
     <ClCompile Include="geometry2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main_homography.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
